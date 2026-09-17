@@ -1,207 +1,266 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Buscador de Descontos e Benefícios</title>
-    <style>
-        * { box-sizing: border-box; }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #fff0f5; /* Fundo rosa bem clarinho */
-            color: #4a0e2a; /* Texto escuro */
-            margin: 0;
-            padding: 16px;
-        }
-        .header {
-            position: sticky;
-            top: 0;
-            background-color: #fff0f5;
-            padding-bottom: 12px;
-            z-index: 10;
-            border-bottom: 1px solid #fce4ec;
-            margin-bottom: 16px;
-        }
-        .controls {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-bottom: 16px;
-        }
-        .controls input, .controls select {
-            padding: 12px;
-            border: 1px solid #f48fb1;
-            border-radius: 8px;
-            font-size: 14px;
-            outline: none;
-            background-color: #ffffff;
-            color: #d81b60;
-            box-shadow: 0 2px 4px rgba(233, 30, 99, 0.05);
-        }
-        .controls input:focus, .controls select:focus {
-            border-color: #d81b60;
-            box-shadow: 0 2px 8px rgba(233, 30, 99, 0.2);
-        }
-        .controls input::placeholder {
-            color: #f06292;
-        }
-        .controls .row {
-            display: flex;
-            gap: 12px;
-        }
-        .controls select {
-            flex: 1;
-        }
-        .counter {
-            text-align: center;
-            font-size: 13px;
-            color: #c2185b;
-            font-weight: 500;
-        }
-        .card {
-            background-color: #ffffff;
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 16px;
-            box-shadow: 0 4px 10px rgba(233, 30, 99, 0.08);
-            border: 1px solid #fce4ec;
-        }
-        .card-title {
-            font-weight: 700;
-            font-size: 17px;
-            margin-bottom: 14px;
-            color: #880e4f;
-        }
-        .offer {
-            background-color: #fdf5f7;
-            border-radius: 8px;
-            padding: 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border: 1px solid #fce4ec;
-        }
-        .offer-type {
-            font-weight: 600;
-            font-size: 14px;
-            color: #880e4f;
-        }
-        .offer-reward {
-            font-size: 13px;
-            color: #d81b60;
-            text-align: right;
-            max-width: 65%;
-            word-wrap: break-word;
-        }
-        .offer-group {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-        .empty-state {
-            text-align: center;
-            color: #d81b60;
-            font-size: 15px;
-            margin-top: 40px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Buscador de Descontos e Benefícios</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: #fff0f5;
+      color: #333333;
+      padding: 16px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    header { text-align: center; padding: 12px 0 20px 0; }
+    h1 { color: #d81b60; font-size: 24px; margin-bottom: 6px; }
+    .subtitle { color: #888888; font-size: 14px; }
+    .controls {
+      background-color: #ffffff;
+      padding: 16px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(216, 27, 96, 0.08);
+      border: 1px solid #fce4ec;
+      margin-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .search-input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #f48fb1;
+      border-radius: 8px;
+      font-size: 15px;
+      outline: none;
+    }
+    .filter-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    @media (max-width: 500px) { .filter-group { grid-template-columns: 1fr; } }
+    select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #f48fb1;
+      border-radius: 8px;
+      font-size: 14px;
+      background-color: #ffffff;
+    }
+    .counter { font-size: 13px; color: #888888; text-align: right; }
+    .cards-grid { display: flex; flex-direction: column; gap: 12px; }
+    .card {
+      background-color: #ffffff;
+      border-radius: 12px;
+      padding: 16px;
+      border: 1px solid #f8bbd0;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+    }
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+    .card-title { font-size: 18px; font-weight: 700; color: #d81b60; }
+    .tags { display: flex; gap: 6px; flex-wrap: wrap; }
+    .tag {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 8px;
+      border-radius: 12px;
+      text-transform: uppercase;
+    }
+    .tag-cat { background-color: #fce4ec; color: #c2185b; }
+    .tag-subcat { background-color: #f3e5f5; color: #7b1fa2; }
+    .benefit-item {
+      display: flex;
+      justify-content: space-between;
+      background-color: #fff8fa;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 13px;
+      margin-bottom: 6px;
+      border-left: 3px solid #f48fb1;
+    }
+    .benefit-program { font-weight: 600; color: #444444; }
+    .benefit-value { color: #d81b60; font-weight: 700; }
+  </style>
 </head>
 <body>
-    <div class="header">
-        <div class="controls">
-            <input type="text" id="searchInput" placeholder="Buscar loja...">
-            <div class="row">
-                <select id="sortSelect">
-                    <option value="az">Ordem: A-Z</option>
-                    <option value="za">Ordem: Z-A</option>
-                </select>
-                <select id="filterSelect">
-                    <option value="all">Todos os Filtros</option>
-                </select>
-            </div>
-        </div>
-        <div class="counter" id="counter">Mostrando 0 de 0 lojas</div>
+
+  <header>
+    <h1>Buscador de Descontos</h1>
+    <p class="subtitle">Encontre recompensas, cashback e benefícios por loja</p>
+  </header>
+
+  <div class="controls">
+    <input type="text" id="searchInput" class="search-input" placeholder="Pesquisar loja ou benefício...">
+    
+    <div class="filter-group">
+      <select id="catSelect">
+        <option value="">Todas as Categorias</option>
+      </select>
+
+      <select id="subcatSelect">
+        <option value="">Todas as Subcategorias</option>
+      </select>
     </div>
 
-    <div id="storeList">
-        <!-- Cards de lojas -->
+    <div class="filter-group">
+      <select id="sortSelect">
+        <option value="az">Ordem A-Z</option>
+        <option value="za">Ordem Z-A</option>
+      </select>
+      <div class="counter" id="storeCounter">Carregando...</div>
     </div>
+  </div>
 
-    <script>
-        const initialStores = [{"name": "99 Food", "offers": [{"type": "Inter Giftcard", "reward": "2% de cashback no giftcard"}]}, {"name": "99 Mobilidade", "offers": [{"type": "Inter Giftcard", "reward": "2% de cashback no giftcard"}]}, {"name": "A7", "offers": [{"type": "Inter Site", "reward": "3% de cacshback"}]}, {"name": "Abraccio", "offers": [{"type": "Inter Giftcard", "reward": "2% de cashback no giftcard"}]}, {"name": "Acer", "offers": [{"type": "Livelo", "reward": "4 pts por R$1"}, {"type": "Inter Cashback", "reward": "8% de cashback"}, {"type": "Inter Site", "reward": "1% de cacshback"}, {"type": "BB", "reward": "0.5%"}]}, {"name": "ADCOS", "offers": [{"type": "Livelo", "reward": "1 pts por R$1"}, {"type": "Inter Site", "reward": "10% de cacshback"}, {"type": "BB", "reward": "7%"}]}, {"name": "Airbnb", "offers": []}, {"name": "Alibaba", "offers": [{"type": "Inter Site", "reward": "3.5% de cacshback"}]}, {"name": "Adidas", "offers": [{"type": "Inter Site", "reward": "8% de cacshback"}, {"type": "BB", "reward": "3.5%"}]}, {"name": "Amazon", "offers": []}, {"name": "Anacapri", "offers": [{"type": "Inter Giftcard", "reward": "5% de cashback no giftcard"}]}, {"name": "Angeloni", "offers": [{"type": "Inter Cashback", "reward": "5% de cashback"}]}, {"name": "Aliexpress", "offers": [{"type": "Livelo", "reward": "3 pts por R$1"}, {"type": "Inter Site", "reward": "7% de cashback"}, {"type": "BB", "reward": "2%"}]}, {"name": "Anna Pegova", "offers": [{"type": "Alelo", "reward": "2.56% de crédito"}]}, {"name": "Ao Gosto", "offers": [{"type": "Inter Giftcard", "reward": "4% de cashback no giftcard"}]}, {"name": "App Store", "offers": [{"type": "Inter Giftcard", "reward": "4% de cashback no giftcard"}]}, {"name": "AppGas", "offers": [{"type": "Inter Giftcard", "reward": "1% de cashback no giftcard"}]}, {"name": "Approve", "offers": [{"type": "Inter Site", "reward": "3% de cacshback"}, {"type": "Alelo", "reward": "10%"}, {"type": "Mastercard", "reward": "30%"}]}, {"name": "Arezzo", "offers": [{"type": "Inter Giftcard", "reward": "5% de cashback no giftcard"}]}, {"name": "Armazém Circular", "offers": [{"type": "Inter Cashback", "reward": "2% de cashback"}]}, {"name": "Alura", "offers": [{"type": "Inter Site", "reward": "5.5% de cacshback"}, {"type": "BB", "reward": "4%"}]}, {"name": "Assaí", "offers": [{"type": "Inter Giftcard", "reward": "3% de cashback no giftcard"}]}, {"name": "Amobeleza", "offers": [{"type": "Inter Site", "reward": "6% de cacshback"}, {"type": "Alelo", "reward": "10%"}, {"type": "Mastercard", "reward": "10%"}, {"type": "BB", "reward": "5%"}]}, {"name": "Atacadão Danone", "offers": [{"type": "Inter Site", "reward": "7% de cacshback"}]}, {"name": "Avowed", "offers": [{"type": "Inter Giftcard", "reward": "5% de cashback no giftcard"}]}, {"name": "Animale", "offers": [{"type": "Inter Site", "reward": "4% de cacshback"}, {"type": "Alelo", "reward": "15%"}, {"type": "BB", "reward": "3.5%"}]}, {"name": "B2 Online", "offers": [{"type": "Inter Cashback", "reward": "5% de cashback"}]}, {"name": "Bacio di Latte", "offers": [{"type": "Inter Giftcard", "reward": "3% de cashback no giftcard"}, {"type": "Mastercard", "reward": "Pague 1 Leve 2"}]}, {"name": "Bagaggio", "offers": [{"type": "Livelo", "reward": "1 pts por R$1"}, {"type": "Inter Cashback", "reward": "2% de cashback"}, {"type": "Inter Giftcard", "reward": "2% de cashback no giftcard"}]}, {"name": "Baggio", "offers": [{"type": "Inter Site", "reward": "5% de cacshback"}, {"type": "Alelo", "reward": "15%"}]}, {"name": "Battle.Net", "offers": [{"type": "Inter Giftcard", "reward": "3% de cashback no giftcard"}]}, {"name": "Belmicro", "offers": [{"type": "Inter Cashback", "reward": "2% de cashback"}]}, {"name": "Bem Estar", "offers": [{"type": "Inter Giftcard", "reward": "3% de cashback no giftcard"}]}, {"name": "Bemol", "offers": []}, {"name": "Beyoung", "offers": [{"type": "Livelo", "reward": "3 pts por R$1"}, {"type": "Inter Cashback", "reward": "5% de cashback"}]}, {"name": "BLIZZARD/BATTLE.NET", "offers": [{"type": "Inter Giftcard", "reward": "4% de cashback no giftcard"}]}, {"name": "Blood Strike", "offers": [{"type": "Inter Giftcard", "reward": "3% de cashback no giftcard"}]}, {"name": "Booking .com", "offers": [{"type": "Livelo", "reward": "4 pts por R$1"}, {"type": "Inter Site", "reward": "8% de cacshback"}, {"type": "Alelo", "reward": "20%"}, {"type": "Mastercard", "reward": "4%"}]}, {"name": "Brasil Cacau", "offers": [{"type": "Inter Giftcard", "reward": "10% de cashback no giftcard"}]}, {"name": "Brastemp", "offers": [{"type": "Inter Cashback", "reward": "5% de cashback"}, {"type": "Inter Site", "reward": "1.54% de cacshback"}]}, {"name": "Brawl Stars", "offers": [{"type": "Inter Giftcard", "reward": "5% de cashback no giftcard"}]}, {"name": "BRINOX", "offers": [{"type": "Inter Site", "reward": "3% de cacshback"}]}, {"name": "Britânia", "offers": [{"type": "Inter Cashback", "reward": "5% de cashback"}, {"type": "Mastercard", "reward": "10%"}]}, {"name": "Buser Promocional", "offers": [{"type": "Inter Giftcard", "reward": "7% de cashback no giftcard"}]}, {"name": "Cacau Show", "offers": [{"type": "Inter Giftcard", "reward": "3% de cashback no giftcard"}]}, {"name": "Cadence", "offers": [{"type": "Inter Cashback", "reward": "8% de cashback"}]}, {"name": "Call of Duty: Black Ops 7", "offers": [{"type": "Inter Giftcard", "reward": "5% de cashback no giftcard"}]}, {"name": "Aramis", "offers": [{"type": "Livelo", "reward": "2 pts por R$1"}, {"type": "Inter Site", "reward": "6% de cacshback"}, {"type": "Alelo", "reward": "15%"}, {"type": "Mastercard", "reward": "30%"}, {"type": "BB", "reward": "4.5%"}]}, {"name": "Camarada Camarão", "offers": [{"type": "Inter Giftcard", "reward": "3% de cashback no giftcard"}]}, {"name": "Canon", "offers": [{"type": "Inter Site", "reward": "1% de cacshback"}, {"type": "Mastercard", "reward": "30%"}]}, {"name": "Arno", "offers": [{"type": "Inter Site", "reward": "6% de cacshback"}, {"type": "BB", "reward": "4%"}]}, {"name": "Carter's", "offers": [{"type": "Livelo", "reward": "7 pts por R$1"}, {"type": "Inter Giftcard", "reward": "3% de cashback no giftcard"}]}, {"name": "Casa & Video", "offers": [{"type": "Inter Cashback", "reward": "8% de cashback"}]}, {"name": "Casa 812", "offers": [{"type": "Inter Cashback", "reward": "5% de cashback"}]}, {"name": "Casa Riachuelo", "offers": [{"type": "Inter Giftcard", "reward": "15% de cashback no giftcard"}]}, {"name": "Casa Santa Luzia", "offers": [{"type": "Inter Giftcard", "reward": "2% de cashback no giftcard"}]}, {"name": "CasAdega", "offers": [{"type": "Inter Cashback", "reward": "2% de cashback"}]}, {"name": "Casas Bahia", "offers": [{"type": "Livelo", "reward": "1 pts por R$1"}, {"type": "Inter Cashback", "reward": "7% de cashback"}]}, {"name": "Caudalíe", "offers": [{"type": "Inter Site", "reward": "1% de cacshback"}]}, {"name": "Cavuca", "offers": [{"type": "Inter Cashback", "reward": "5% de cashback"}]}, {"name": "CEA / C&A", "offers": [{"type": "Livelo", "reward": "6 pts por R$1"}, {"type": "Inter Site", "reward": "17% de cacshback"}, {"type": "Inter Giftcard", "reward": "6% de cashback no giftcard"}, {"type": "Alelo", "reward": "10%"}, {"type": "Mastercard", "reward": "50% / outros"}]}, {"name": "Cedet", "offers": [{"type": "Inter Cashback", "reward": "2% de cashback"}]}, {"name": "Chilli Beans", "offers": [{"type": "Inter Site", "reward": "5% de cacshback"}, {"type": "Inter Giftcard", "reward": "5% de cashback no giftcard"}]}, {"name": "Cinemark", "offers": [{"type": "Inter Giftcard", "reward": "7% de cashback no giftcard"}]}, {"name": "Claro", "offers": [{"type": "Livelo", "reward": "6 pts por R$1"}, {"type": "Inter Site", "reward": "1% de cacshback"}]}, {"name": "Claro TV+", "offers": [{"type": "Inter Giftcard", "reward": "3% de cashback no giftcard"}]}, {"name": "Asics", "offers": [{"type": "Livelo", "reward": "1 pts por R$1"}, {"type": "Inter Site", "reward": "5% de cacshback"}, {"type": "Mastercard", "reward": "Pague 1 Leve 2"}, {"type": "BB", "reward": "4%"}]}, {"name": "Coco Bambu", "offers": [{"type": "Inter Giftcard", "reward": "3% de cashback no giftcard"}]}, {"name": "Coffee Mais", "offers": [{"type": "Inter Cashback", "reward": "2% de cashback"}]}, {"name": "Colcci", "offers": [{"type": "Livelo", "reward": "2 pts por R$1"}]}, {"name": "Colormaq", "offers": [{"type": "Inter Cashback", "reward": "2% de cashback"}]}, {"name": "Consul", "offers": [{"type": "Inter Cashback", "reward": "5% de cashback"}, {"type": "Inter Site", "reward": "1% de cacshback"}, {"type": "Mastercard", "reward": "R$100 OFF"}]}, {"name": "Asus", "offers": [{"type": "BB", "reward": "0.8%"}]}, {"name": "Cook Eletroraro", "offers": [{"type": "Inter Cashback", "reward": "5% de cashback"}]}, {"name": "Creamy", "offers": [{"type": "Inter Site", "reward": "2% de cacshback"}, {"type": "Alelo", "reward": "15%"}, {"type": "Mastercard", "reward": "10%"}]}, {"name": "Crocs", "offers": [{"type": "Livelo", "reward": "2 pts por R$1"}, {"type": "Inter Site", "reward": "4.9% de cacshback"}, {"type": "Inter Giftcard", "reward": "12% de cashback no giftcard"}]}, {"name": "CVC", "offers": [{"type": "Inter Site", "reward": "1% de cacshback"}]}, {"name": "CWB Time", "offers": [{"type": "Inter Cashback", "reward": "2% de cashback"}]}, {"name": "Avon", "offers": [{"type": "Inter Site", "reward": "10% de cacshback"}, {"type": "Alelo", "reward": "20%"}, {"type": "Mastercard", "reward": "50% / outros"}, {"type": "BB", "reward": "16%"}]}, {"name": "Darkness", "offers": [{"type": "Inter Cashback", "reward": "2% de cashback"}]}, {"name": "Azul", "offers": [{"type": "Inter Site", "reward": "1% de cacshback"}, {"type": "BB", "reward": "0.5%"}]}, {"name": "Dell", "offers": [{"type": "Mastercard", "reward": "7%"}]}, {"name": "Democrata", "offers": [{"type": "Livelo", "reward": "2 pts por R$1"}, {"type": "Inter Giftcard", "reward": "3% de cashback no giftcard"}]}, {"name": "Dengo", "offers": [{"type": "Inter Giftcard", "reward": "4% de cashback no giftcard"}]}, {"name": "Desinchá", "offers": [{"type": "Inter Cashback", "reward": "4% de cashback"}]}, {"name": "Di Gaspi", "offers": [{"type": "Inter Site", "reward": "3% de cacshback"}]}, {"name": "Di Paolo", "offers": [{"type": "Inter Giftcard", "reward": "5% de cashback no giftcard"}]}, {"name": "Beleza na Web", "offers": [{"type": "Livelo", "reward": "10 pts por R$1"}, {"type": "Inter Site", "reward": "10% de cacshback"}, {"type": "Mastercard", "reward": "10%"}, {"type": "BB", "reward": "13%"}]}, {"name": "DISCOVER CARS", "offers": [{"type": "Inter Site", "reward": "4% de cacshback"}]}, {"name": "Divvino", "offers": [{"type": "Inter Cashback", "reward": "2% de cashback"}, {"type": "Inter Site", "reward": "1% de cacshback"}]}, {"name": "Dolce Gusto by Americanas", "offers": [{"type": "Inter Giftcard", "reward": "1% de cashback no giftcard"}]}, {"name": "Domino's", "offers": [{"type": "Alelo", "reward": "30%"}, {"type": "Mastercard", "reward": "40%"}]}, {"name": "Donkey Kong Bananza", "offers": [{"type": "Inter Giftcard", "reward": "4% de cashback no giftcard"}]}, {"name": "Donkey Kong Country Returns HD", "offers": [{"type": "Inter Giftcard", "reward": "4% de cashback no giftcard"}]}, {"name": "Doom: The Dark Ages", "offers": [{"type": "Inter Giftcard", "reward": "5% de cashback no giftcard"}]}, {"name": "DR. JONES", "offers": [{"type": "Inter Site", "reward": "7% de cacshback"}]}, {"name": "Bo.Bô", "offers": [{"type": "Mastercard", "reward": "10%"}, {"type": "BB", "reward": "5%"}]}, {"name": "Braé", "offers": [{"type": "Mastercard", "reward": "5%"}, {"type": "BB", "reward": "2.5%"}]}, {"name": "Drogaria Indiana", "offers": [{"type": "Inter Site", "reward": "6% de cacshback"}]}, {"name": "DROGARIA ROSÁRIO", "offers": [{"type": "Inter Site", "reward": "1% de cacshback"}]}, {"name": "Calvin Klein", "offers": [{"type": "Inter Cashback", "reward": "2% de cashback"}, {"type": "Inter Site", "reward": "6% de cacshback"}, {"type": "BB", "reward": "4.5%"}]}, {"name": "DROGARIA TAMOIO", "offers": [{"type": "Inter Site", "reward": "1% de cacshback"}]}, {"name": "DROGARIA VENANCIO", "offers": [{"type": "Inter Site", "reward": "5% de cacshback"}]}, {"name": "Camicado", "offers": [{"type": "Livelo", "reward": "2 pts por R$1"}, {"type": "Inter Cashback", "reward": "4% de cashback"}, {"type": "Inter Site", "reward": "0.7% de cacshback"}, {"type": "Inter Giftcard", "reward": "2% de cashback no giftcard"}, {"type": "Alelo", "reward": "10%"}, {"type": "BB", "reward": "3%"}]}, {"name": "DUTRA MÁQUINAS", "offers": [{"type": "Inter Site", "reward": "2% de cacshback"}]}, {"name": "DUX", "offers": [{"type": "Inter Site", "reward": "4% de cacshback"}]}, {"name": "EA FC 26 Standard Edition", "offers": [{"type": "Inter Giftcard", "reward": "5% de cashback no giftcard"}]}, {"name": "EA FC 26 Ultimate Edition", "offers": [{"type": "Inter Giftcard", "reward": "5% de cashback no giftcard"}]}, {"name": "Ecletiq", "offers": [{"type": "Inter Cashback", "reward": "5% de cashback"}]}, {"name": "eclock", "offers": [{"type": "Inter Site", "reward": "1% de cacshback"}]}, {"name": "Carrefour", "offers": [{"type": "Inter Cashback", "reward": "5% de cashback"}, {"type": "Inter Site", "reward": "0.5% de cacshback"}, {"type": "Inter Giftcard", "reward": "2% de cashback no giftcard"}, {"type": "BB", "reward": "1.5%"}]}, {"name": "Elden Ring Nightreign", "offers": [{"type": "Inter Giftcard", "reward": "5% de cashback no giftcard"}]}, {"name": "Ellus", "offers": [{"type": "Livelo", "reward": "2 pts por R$1"}]}, {"name": "eMania", "offers": [{"type": "Inter Cashback", "reward": "5% de cashback"}]}, {"name": "Emma Colchões", "offers": [{"type": "Inter Site", "reward": "10% de cashback"}, {"type": "Alelo", "reward": "10%"}]}, {"name": "EMPÓRIO DA CERVEJA", "offers": [{"type": "Inter Site", "reward": "3% de cacshback"}]}, {"name": "Centauro", "offers": [{"type": "Livelo", "reward": "2 pts por R$1"}, {"type": "Inter Site", "reward": "2% de cacshback"}, {"type": "Inter Giftcard", "reward": "10% de cashback no giftcard"}, {"type": "Mastercard", "reward": "15%"}, {"type": "BB", "reward": "2%"}]}, {"name": "Clinique", "offers": [{"type": "Inter Site", "reward": "4.9% de cacshback"}, {"type": "BB", "reward": "5%"}]}, {"name": "ESTOQUE", "offers": [{"type": "Inter Site", "reward": "6% de cacshback"}]}, {"name": "e-Store", "offers": [{"type": "Inter Cashback", "reward": "5% de cashback"}]}, {"name": "Eufina", "offers": [{"type": "Inter Cashback", "reward": "5% de cashback"}]}, {"name": "EURO", "offers": [{"type": "Inter Site", "reward": "6% de cacshback"}]}, {"name": "Euro Relógios", "offers": [{"type": "Alelo", "reward": "10%"}]}, {"name": "evas perfumaria", "offers": [{"type": "Inter Site", "reward": "8% de cacshback"}]}, {"name": "Cobasi", "offers": [{"type": "Inter Site", "reward": "2% de cacshback"}, {"type": "BB", "reward": "2%"}]}, {"name": "Experiência de Beleza Quem Disse, Berenice?", "offers": [{"type": "Inter Giftcard", "reward": "4% de cashback no giftcard"}]}, {"name": "Extra", "offers": [{"type": "Inter Cashback", "reward": "7% de cashback"}, {"type": "Inter Giftcard", "reward": "3% de cashback no giftcard"}]}, {"name": "Continental", "offers": [{"type": "Inter Site", "reward": "0.5% de cacshback"}, {"type": "BB", "reward": "0.7%"}]}, {"name": "Farlight", "offers": [{"type": "Inter Giftcard", "reward": "2% de cashback no giftcard"}]}, {"name": "FARM", "offers": [{"type": "Inter Site", "reward": "2.8% de cacshback"}]}, {"name": "Farma22", "offers": [{"type": "Inter Site", "reward": "3% de cacshback"}]}, {"name": "Farmácia de Bicho", "offers": [{"type": "Inter Cashback", "reward": "3% de cashback"}]}, {"name": "FARMÁCIA PREÇO POPULAR", "offers": [{"type": "Inter Site", "reward": "3% de cacshback"}]}, {"name": "Farmácia São João", "offers": [{"type": "Inter Site", "reward": "5% de cacshback"}]}, {"name": "Farmácias app", "offers": [{"type": "Inter Site", "reward": "4% de cacshback"}]}, {"name": "Farmácias Nissei", "offers": [{"type": "Inter Giftcard", "reward": "1% de cashback no giftcard"}]}, {"name": "Converse", "offers": [{"type": "Livelo", "reward": "2 pts por R$1"}, {"type": "Inter Site", "reward": "1.5% de cacshback"}, {"type": "BB", "reward": "4%"}]}, {"name": "Fazer a Festa", "offers": [{"type": "Inter Giftcard", "reward": "3% de cashback no giftcard"}]}, {"name": "Fever", "offers": [{"type": "Inter Giftcard", "reward": "3% de cashback no giftcard"}]}, {"name": "FIFA Points", "offers": [{"type": "Inter Giftcard", "reward": "4% de cashback no giftcard"}]}, {"name": "3qa", "offers": [{"type": "Livelo", "reward": "2 pts por R$1"}, {"type": "Inter Site", "reward": "6% de cacshback"}, {"type": "Alelo", "reward": "10%"}, {"type": "Mastercard", "reward": "25%"}]}, {"name": "Dafiti", "offers": [{"type": "Livelo", "reward": "1 pts por R$1"}, {"type": "Inter Site", "reward": "1% de cacshback"}, {"type": "Mastercard", "reward": "80%"}, {"type": "BB", "reward": "0.6%"}]}, {"name": "Fogo de Chão", "offers": [{"type": "Inter Giftcard", "reward": "2% de cashback no giftcard"}]}, {"name": "Forever Liss", "offers": [{"type": "Inter Cashback", "reward": "5% de cashback"}, {"type": "Inter Site", "reward": "4% de cacshback"}, {"type": "Alelo", "reward": "15%"}]}, {"name": "Fórmula 1 25", "offers": [{"type": "Inter Giftcard", "reward": "5% de cashback no giftcard"}]}, {"name": "Dakota", "offers": [{"type": "Inter Site", "reward": "2.5% de cacshback"}, {"type": "Mastercard", "reward": "5%"}, {"type": "BB", "reward": "3%"}]}, {"name": "Free Fire", "offers": []}, {"name": "Frigelar", "offers": [{"type": "Inter Cashback", "reward": "5% de cashback"}]}, {"name": "Fripeças", "offers": [{"type": "Inter Cashback", "reward": "5% de cashback"}]}, {"name": "Gama Italy", "offers": [{"type": "Inter Cashback", "reward": "2% de cashback"}, {"type": "Inter Site", "reward": "6% de cacshback"}, {"type": "Alelo", "reward": "12%"}]}, {"name": "Game Games", "offers": [{"type": "Inter Cashback", "reward": "5% de cashback"}]}, {"name": "Garena Delta Force", "offers": [{"type": "Inter Giftcard", "reward": "3% de cashback no giftcard"}]}, {"name": "GAZIN", "offers": [{"type": "Inter Site", "reward": "2% de cacshback"}]}, {"name": "GCFARMA", "offers": [{"type": "Inter Site", "reward": "4% de cacshback"}]}, {"name": "Geekbuying", "offers": [{"type": "Inter Site", "reward": "2% de cacshback"}]}, {"name": "Gendai", "offers": [{"type": "Alelo", "reward": "R$10 OFF"}]}, {"name": "Decathlon", "offers": [{"type": "Inter Giftcard", "reward": "3% de cashback no giftcard"}, {"type": "BB", "reward": "1.5%"}]}, {"name": "Decolar", "offers": [{"type": "Livelo", "reward": "6 pts por R$1"}, {"type": "Inter Site", "reward": "2% de cacshback"}, {"type": "Alelo", "reward": "5% / 1,6%"}, {"type": "Mastercard", "reward": "10% / outros"}, {"type": "BB", "reward": "1.5%"}]}, {"name": "Gol", "offers": [{"type": "Inter Site", "reward": "2% de cacshback"}]}, {"name": "Google Play", "offers": [{"type": "Inter Giftcard", "reward": "4% de cashback no giftcard"}]}, {"name": "Gorilla Shield", "offers": [{"type": "Inter Cashback", "reward": "3% de cashback"}]}, {"name": "GRAN CONCURSOS", "offers": [{"type": "Inter Site", "reward": "7% de cacshback"}]}, {"name": "Grand Cru", "offers": [{"type": "Inter Site", "reward": "3% de cacshback"}]}, {"name": "GrandVision by Fotoptica", "offers": [{"type": "Inter Site", "reward": "3% de cacshback"}]}, {"name": "grupo a+", "offers": [{"type": "Inter Site", "reward": "5% de cacshback"}]}, {"name": "GSS", "offers": [{"type": "Inter Site", "reward": "5% de cacshback"}]}, {"name": "GTA VI - Grand Theft Auto", "offers": [{"type": "Inter Giftcard", "reward": "5% de cashback no giftcard"}]}, {"name": "DIESEL", "offers": [{"type": "Inter Site", "reward": "4% de cacshback"}, {"type": "BB", "reward": "4%"}]}, {"name": "Gurumê", "offers": [{"type": "Inter Giftcard", "reward": "5% de cashback no giftcard"}]}, {"name": "HAVANNA", "offers": [{"type": "Inter Site", "reward": "4% de cacshback"}, {"type": "Alelo", "reward": "30%"}]}, {"name": "Her", "offers": [{"type": "Inter Site", "reward": "1% de cacshback"}]}, {"name": "Hering", "offers": [{"type": "Livelo", "reward": "3 pts por R$1"}, {"type": "Inter Site", "reward": "2% de cacshback"}, {"type": "Alelo", "reward": "25%"}, {"type": "Mastercard", "reward": "10%"}]}, {"name": "DJI", "offers": [{"type": "Inter Site", "reward": "4% de cacshback"}, {"type": "BB", "reward": "0.5%"}]}, {"name": "Hertz", "offers": [{"type": "Alelo", "reward": "12%"}]}, {"name": "Hilton", "offers": [{"type": "Inter Site", "reward": "1% de cacshback"}]}, {"name": "Home To You", "offers": [{"type": "Inter Cashback", "reward": "2% de cashback"}]}, {"name": "Homepoint", "offers": [{"type": "Inter Cashback", "reward": "2% de cashback"}]}, {"name": "Hope", "offers": [{"type": "Livelo", "reward": "2 pts por R$1"}, {"type": "Inter Site", "reward": "8% de cacshback"}]}, {"name": "HOSTINGER", "offers": [{"type": "Inter Site", "reward": "12% de cacshback"}]}, {"name": "Hoteis", "offers": [{"type": "Inter Site", "reward": "5% de cacshback"}]}, {"name": "Droga Raia", "offers": [{"type": "Inter Site", "reward": "4% de cacshback"}, {"type": "BB", "reward": "2.3%"}]}, {"name": "HP", "offers": [{"type": "Inter Site", "reward": "1% de cacshback"}]}, {"name": "HUAWEI", "offers": [{"type": "Inter Cashback", "reward": "5% de cashback"}]}, {"name": "HUGO BOSS", "offers": [{"type": "Inter Site", "reward": "4% de cacshback"}]}, {"name": "HUPI", "offers": [{"type": "Inter Cashback", "reward": "5% de cashback"}]}, {"name": "HYATT", "offers": [{"type": "Inter Site", "reward": "1% de cacshback"}]}, {"name": "Hypera Pharma", "offers": [{"type": "Inter Site", "reward": "2% de cacshback"}]}, {"name": "I Wanna Sleep", "offers": [{"type": "Inter Cashback", "reward": "2% de cashback"}]}, {"name": "IBERIA", "offers": [{"type": "Inter Site", "reward": "1% de cacshback"}]}, {"name": "IBEROSTAR", "offers": [{"type": "Inter Site", "reward": "1% de cacshback"}]}, {"name": "IGNITES 365", "offers": [{"type": "Inter Site", "reward": "2% de cacshback"}]}, {"name": "IHG HOTELS & RESORTS", "offers": [{"type": "Inter Site", "reward": "1% de cacshback"}]}, {"name": "ihug", "offers": []}, {"name": "IMVU", "offers": [{"type": "Inter Giftcard", "reward": "4% de cashback no giftcard"}]}, {"name": "Drogal", "offers": [{"type": "Inter Cashback", "reward": "2% de cashback"}, {"type": "BB", "reward": "2%"}]}, {"name": "Ingresso.com", "offers": [{"type": "Inter Giftcard", "reward": "5% de cashback no giftcard"}]}, {"name": "Drogaria Araujo", "offers": [{"type": "Inter Cashback", "reward": "4% de cashback"}, {"type": "BB", "reward": "1.6%"}]}, {"name": "Integralmédica", "offers": [{"type": "Inter Cashback", "reward": "2% de cashback"}]}, {"name": "Inter Cel", "offers": [{"type": "Inter Cashback", "reward": "1% de cashback"}]}, {"name": "Inter Loop", "offers": []}, {"name": "INTER STORE", "offers": [{"type": "Inter Site", "reward": "1% de cacshback"}]}, {"name": "Drogaria Pacheco", "offers": [{"type": "Inter Site", "reward": "4% de cacshback"}, {"type": "BB", "reward": "2.5%"}]}, {"name": "Invincible", "offers": [{"type": "Inter Giftcard", "reward": "10% de cashback no giftcard"}]}, {"name": "IODICE", "offers": [{"type": "Inter Site", "reward": "5% de cacshback"}]}, {"name": "Ipiranga", "offers": [{"type": "Alelo", "reward": "Desconto por litro"}]}, {"name": "ITALIARAIL", "offers": [{"type": "Inter Site", "reward": "2% de cacshback"}]}, {"name": "IVAN JOIAS", "offers": [{"type": "Inter Site", "reward": "4% de cacshback"}]}, {"name": "Drogaria São Paulo", "offers": [{"type": "Inter Site", "reward": "4% de cacshback"}, {"type": "BB", "reward": "2.8%"}]}, {"name": "Jeronimo", "offers": [{"type": "Inter Giftcard", "reward": "2% de cashback no giftcard"}, {"type": "Alelo", "reward": "10%"}]}, {"name": "JOHN JOHN", "offers": [{"type": "Inter Site", "reward": "6% de cacshback"}, {"type": "Mastercard", "reward": "15%"}]}, {"name": "JOVI", "offers": [{"type": "Inter Cashback", "reward": "2% de cashback"}]}, {"name": "Drogasil", "offers": [{"type": "Inter Site", "reward": "0.2% de cacshback"}, {"type": "Alelo", "reward": "15%"}, {"type": "BB", "reward": "2.3%"}]}, {"name": "Dudalina", "offers": [{"type": "Livelo", "reward": "2 pts por R$1"}, {"type": "Inter Site", "reward": "8% de cacshback"}, {"type": "Mastercard", "reward": "10%"}, {"type": "BB", "reward": "5%"}]}, {"name": "Dufrio", "offers": [{"type": "Inter Site", "reward": "1% de cacshback"}, {"type": "BB", "reward": "1%"}]}, {"name": "KIWI COM", "offers": [{"type": "Inter Site", "reward": "2% de cacshback"}]}, {"name": "Kopenhagen", "offers": [{"type": "Inter Giftcard", "reward": "10% de cashback no giftcard"}]}, {"name": "lança perfume", "offers": [{"type": "Inter Site", "reward": "3% de cacshback"}]}, {"name": "Larroudé", "offers": [{"type": "Inter Site", "reward": "6% de cacshback"}]}, {"name": "Latam", "offers": [{"type": "Inter Site", "reward": "3% de cacshback"}]}, {"name": "Le Biscuit", "offers": [{"type": "Inter Cashback", "reward": "8% de cashback"}]}, {"name": "efácil", "offers": [{"type": "Inter Site", "reward": "3% de cacshback"}, {"type": "BB", "reward": "1%"}]}, {"name": "League of Legends", "offers": [{"type": "Inter Giftcard", "reward": "2% de cashback no giftcard"}]}, {"name": "Electrolux", "offers": [{"type": "Livelo", "reward": "1 pts por R$1"}, {"type": "Inter Cashback", "reward": "7% de cashback"}, {"type": "Inter Site", "reward": "1% de cacshback"}, {"type": "Mastercard", "reward": "5%"}, {"type": "BB", "reward": "0.5%"}]}, {"name": "Level Up", "offers": [{"type": "Inter Giftcard", "reward": "7% de cashback no giftcard"}]}, {"name": "eÓtica", "offers": [{"type": "Inter Site", "reward": "8% de cacshback"}, {"type": "Alelo", "reward": "15%"}, {"type": "BB", "reward": "4.5%"}]}, {"name": "Life Vivara", "offers": [{"type": "Inter Giftcard", "reward": "2% de cashback no giftcard"}]}, {"name": "Lindt", "offers": [{"type": "Inter Giftcard", "reward": "2% de cashback no giftcard"}]}, {"name": "Liset", "offers": [{"type": "Inter Site", "reward": "2% de cacshback"}]}, {"name": "Época Cosméticos", "offers": [{"type": "Livelo", "reward": "1 pts por R$1"}, {"type": "Inter Cashback", "reward": "4% de cashback"}, {"type": "Inter Site", "reward": "3% de cacshback"}, {"type": "BB", "reward": "3%"}]}, {"name": "LIVERPOOL", "offers": [{"type": "Inter Site", "reward": "1% de cacshback"}]}, {"name": "Livraria da Travessa", "offers": [{"type": "Inter Giftcard", "reward": "2% de cashback no giftcard"}]}, {"name": "Livraria da Vila", "offers": [{"type": "Inter Giftcard", "reward": "3% de cashback no giftcard"}]}, {"name": "ESTÉE LAUDER", "offers": [{"type": "Inter Site", "reward": "8% de cacshback"}, {"type": "Alelo", "reward": "10%"}, {"type": "BB", "reward": "10%"}]}, {"name": "Eudora", "offers": [{"type": "Livelo", "reward": "6 pts por R$1"}, {"type": "Inter Site", "reward": "10% de cacshback"}, {"type": "Inter Giftcard", "reward": "6% de cashback no giftcard"}, {"type": "Alelo", "reward": "15%"}, {"type": "Mastercard", "reward": "Brinde"}, {"type": "BB", "reward": "7.5%"}]}, {"name": "Evino", "offers": [{"type": "Inter Site", "reward": "3% de cacshback"}, {"type": "Inter Giftcard", "reward": "3% de cashback no giftcard"}, {"type": "BB", "reward": "3%"}]}, {"name": "Loja Kärcher", "offers": [{"type": "Inter Cashback", "reward": "2% de cashback"}]}, {"name": "Lojas Colombo", "offers": [{"type": "Inter Cashback", "reward": "4% de cashback"}]}, {"name": "Lojas REDE", "offers": [{"type": "Inter Site", "reward": "1% de cacshback"}]}, {"name": "Lojinha Baby & Me", "offers": [{"type": "Inter Site", "reward": "3% de cacshback"}]}, {"name": "L'OR", "offers": [{"type": "Inter Site", "reward": "4.9% de cacshback"}]}, {"name": "Los Wear", "offers": [{"type": "Inter Cashback", "reward": "2% de cashback"}]}, {"name": "Lottoland", "offers": [{"type": "Inter Site", "reward": "3% de cacshback"}]}, {"name": "Loungerie", "offers": [{"type": "Livelo", "reward": "1 pts por R$1"}, {"type": "Inter Site", "reward": "4% de cacshback"}, {"type": "Inter Giftcard", "reward": "4% de cashback no giftcard"}, {"type": "Alelo", "reward": "Brinde"}, {"type": "Mastercard", "reward": "15%"}]}, {"name": "Luigi's Mansion 3", "offers": [{"type": "Inter Giftcard", "reward": "4% de cashback no giftcard"}]}, {"name": "Luuna", "offers": [{"type": "Inter Site", "reward": "4% de cacshback"}]}, {"name": "MAC", "offers": [{"type": "Inter Site", "reward": "9% de cacshback"}]}, {"name": "MAC by Renner", "offers": [{"type": "Inter Giftcard", "reward": "3% de cashback no giftcard"}]}, {"name": "MadeiraMadeira", "offers": [{"type": "Inter Cashback", "reward": "6% de cashback"}, {"type": "Inter Site", "reward": "7% de cacshback"}]}, {"name": "Madero", "offers": [{"type": "Inter Giftcard", "reward": "15% de cashback no giftcard"}, {"type": "Alelo", "reward": "10%"}]}, {"name": "Madesa", "offers": [{"type": "Inter Cashback", "reward": "2% de cashback"}, {"type": "Inter Site", "reward": "4% de cacshback"}]}, {"name": "Magalu", "offers": [{"type": "Livelo", "reward": "2 pts por R$1"}, {"type": "Inter Cashback", "reward": "7% de cashback"}, {"type": "Inter Site", "reward": "2% de cashback"}, {"type": "Alelo", "reward": "80%"}, {"type": "Mastercard", "reward": "R$ 30 OFF"}]}, {"name": "EXITLAG", "offers": [{"type": "Inter Site", "reward": "8% de cacshback"}, {"type": "BB", "reward": "5%"}]}, {"name": "MANUAL", "offers": [{"type": "Inter Site", "reward": "10% de cacshback"}]}, {"name": "MARIA VALENTINA", "offers": [{"type": "Inter Site", "reward": "5% de cacshback"}]}, {"name": "Mario Golf: Super Rush", "offers": [{"type": "Inter Giftcard", "reward": "4% de cashback no giftcard"}]}, {"name": "Mario Kart World", "offers": [{"type": "Inter Giftcard", "reward": "4% de cashback no giftcard"}]}, {"name": "Mario Tennis Fever", "offers": [{"type": "Inter Giftcard", "reward": "4% de cashback no giftcard"}]}, {"name": "Mario vs. Donkey Kong", "offers": [{"type": "Inter Giftcard", "reward": "4% de cashback no giftcard"}]}, {"name": "Extrafarma", "offers": [{"type": "Inter Site", "reward": "3% de cacshback"}, {"type": "Alelo", "reward": "40%"}, {"type": "BB", "reward": "3%"}]}, {"name": "Mash.", "offers": [{"type": "Inter Site", "reward": "6% de cacshback"}]}, {"name": "Mastercell", "offers": [{"type": "Inter Cashback", "reward": "2% de cashback"}]}, {"name": "MAX DESIGN", "offers": [{"type": "Inter Site", "reward": "2% de cacshback"}]}, {"name": "MC MERCAFÉ", "offers": [{"type": "Inter Site", "reward": "3% de cacshback"}]}, {"name": "McAfee", "offers": [{"type": "Inter Giftcard", "reward": "4% de cashback no giftcard"}]}, {"name": "McDonald's", "offers": [{"type": "Inter Giftcard", "reward": "2% de cashback no giftcard"}]}, {"name": "megaferramentas", "offers": [{"type": "Inter Site", "reward": "4% de cacshback"}]}, {"name": "Menimport", "offers": [{"type": "Inter Cashback", "reward": "8% de cashback"}]}, {"name": "Menin Company", "offers": [{"type": "Inter Cashback", "reward": "8% de cashback"}]}, {"name": "Mercado Livre", "offers": [{"type": "Livelo", "reward": "2 pts por R$1"}]}, {"name": "Microsoft 365 Family + Antivirus McAfee", "offers": [{"type": "Inter Giftcard", "reward": "4% de cashback no giftcard"}]}, {"name": "Minecraft", "offers": [{"type": "Inter Giftcard", "reward": "7% de cashback no giftcard"}]}, {"name": "Minecraft Dungeons", "offers": [{"type": "Inter Giftcard", "reward": "5% de cashback no giftcard"}]}, {"name": "Minecraft Legends Console", "offers": [{"type": "Inter Giftcard", "reward": "5% de cashback no giftcard"}]}, {"name": "Minecraft Legends PC", "offers": [{"type": "Inter Giftcard", "reward": "4% de cashback no giftcard"}]}, {"name": "Minecraft Minecoins", "offers": [{"type": "Inter Giftcard", "reward": "7% de cashback no giftcard"}]}, {"name": "Minecraft Triple Bundle", "offers": [{"type": "Inter Giftcard", "reward": "4% de cashback no giftcard"}]}, {"name": "Mistertech", "offers": [{"type": "Inter Cashback", "reward": "2% de cashback"}]}, {"name": "FARFETCH", "offers": [{"type": "Inter Site", "reward": "3% de cacshback"}, {"type": "BB", "reward": "2.3%"}]}, {"name": "Mobile Legends", "offers": [{"type": "Inter Giftcard", "reward": "4% de cashback no giftcard"}]}, {"name": "MOBLY", "offers": [{"type": "Inter Site", "reward": "2% de cacshback"}]}, {"name": "Mondaine", "offers": [{"type": "Inter Cashback", "reward": "4% de cashback"}, {"type": "Inter Site", "reward": "5% de cacshback"}]}, {"name": "Monte Carlo", "offers": [{"type": "Inter Site", "reward": "8% de cacshback"}, {"type": "Inter Giftcard", "reward": "3% de cashback no giftcard"}]}, {"name": "Morana", "offers": [{"type": "Livelo", "reward": "12 pts por R$1"}, {"type": "Alelo", "reward": "12%"}, {"type": "Mastercard", "reward": "17% / Pague 1 Leve 2"}]}, {"name": "Fast Shop", "offers": [{"type": "Inter Cashback", "reward": "6% de cashback"}, {"type": "Inter Site", "reward": "10% de cacshback"}, {"type": "BB", "reward": "1.7%"}]}, {"name": "Mu Online", "offers": [{"type": "Inter Giftcard", "reward": "4% de cashback no giftcard"}]}, {"name": "Multi", "offers": [{"type": "Inter Cashback", "reward": "10% de cashback"}, {"type": "Mastercard", "reward": "5%"}]}, {"name": "Multimóveis", "offers": [{"type": "Inter Cashback", "reward": "4% de cashback"}]}, {"name": "my favorite", "offers": [{"type": "Inter Site", "reward": "4% de cacshback"}]}, {"name": "Ferreira Costa", "offers": [{"type": "Inter Site", "reward": "1% de cacshback"}, {"type": "BB", "reward": "1.8%"}]}, {"name": "NBA", "offers": [{"type": "Inter Site", "reward": "1% de cacshback"}, {"type": "Mastercard", "reward": "10%"}]}, {"name": "NC Soft", "offers": [{"type": "Inter Giftcard", "reward": "5% de cashback no giftcard"}]}, {"name": "Fila", "offers": [{"type": "Livelo", "reward": "2 pts por R$1"}, {"type": "Inter Site", "reward": "5.5% de cashback"}, {"type": "Alelo", "reward": "10%"}, {"type": "Mastercard", "reward": "25%"}, {"type": "BB", "reward": "4.2%"}]}, {"name": "Netflix", "offers": [{"type": "Inter Giftcard", "reward": "3% de cashback no giftcard"}]}, {"name": "FLIXBUS", "offers": [{"type": "Inter Site", "reward": "4% de cacshback"}, {"type": "BB", "reward": "4%"}]}, {"name": "NH HOTELS & RESORTS", "offers": [{"type": "Inter Site", "reward": "6% de cacshback"}]}, {"name": "Nintendo eShop", "offers": [{"type": "Inter Giftcard", "reward": "4% de cashback no giftcard"}]}, {"name": "Nintendo Switch Online", "offers": [{"type": "Inter Giftcard", "reward": "10% de cashback no giftcard"}]}, {"name": "nissei", "offers": [{"type": "Inter Site", "reward": "3% de cacshback"}]}, {"name": "novaflor", "offers": [{"type": "Inter Site", "reward": "5% de cacshback"}]}, {"name": "Nutrify", "offers": [{"type": "Inter Cashback", "reward": "2% de cashback"}, {"type": "Inter Site", "reward": "3% de cacshback"}]}, {"name": "Nutri-se", "offers": [{"type": "Inter Site", "reward": "12% de cacshback"}]}, {"name": "FOSSIL", "offers": [{"type": "Inter Site", "reward": "5% de cacshback"}, {"type": "Alelo", "reward": "10%"}, {"type": "BB", "reward": "5%"}]}, {"name": "NV", "offers": [{"type": "Inter Site", "reward": "3% de cacshback"}]}, {"name": "O.U.I", "offers": [{"type": "Inter Site", "reward": "8% de cacshback"}]}, {"name": "Océane", "offers": [{"type": "Livelo", "reward": "2 pts por R$1"}, {"type": "Inter Site", "reward": "4% de cacshback"}]}, {"name": "OFF PREMIUM", "offers": [{"type": "Inter Site", "reward": "4% de cacshback"}]}, {"name": "Ofner", "offers": [{"type": "Inter Giftcard", "reward": "2% de cashback no giftcard"}]}, {"name": "OLX", "offers": [{"type": "Livelo", "reward": "1 pts por R$1"}]}, {"name": "FotoRegistro", "offers": [{"type": "Inter Site", "reward": "6% de cacshback"}, {"type": "BB", "reward": "6%"}]}, {"name": "omio", "offers": [{"type": "Inter Site", "reward": "3% de cacshback"}]}, {"name": "OSCAR", "offers": [{"type": "Inter Site", "reward": "4% de cacshback"}]}, {"name": "FUT FANATICS", "offers": [{"type": "Inter Site", "reward": "3% de cacshback"}, {"type": "BB", "reward": "3%"}]}, {"name": "Oster", "offers": [{"type": "Inter Cashback", "reward": "8% de cashback"}, {"type": "Alelo", "reward": "12%"}]}, {"name": "Ótica Diniz", "offers": [{"type": "Inter Site", "reward": "3% de cashback"}]}, {"name": "Ou", "offers": [{"type": "Alelo", "reward": "10%"}]}, {"name": "Outback Steakhouse", "offers": [{"type": "Livelo", "reward": "1 pts por R$1"}, {"type": "Inter Giftcard", "reward": "15% de cashback no giftcard"}, {"type": "Mastercard", "reward": "brinde"}]}, {"name": "GIGANTEC", "offers": [{"type": "Inter Site", "reward": "5% de cacshback"}, {"type": "BB", "reward": "1%"}]}, {"name": "Panvel", "offers": [{"type": "Inter Cashback", "reward": "2% de cashback"}, {"type": "Inter Site", "reward": "3% de cacshback"}, {"type": "Alelo", "reward": "23%"}]}, {"name": "Paralelos", "offers": [{"type": "Inter Site", "reward": "1% de cacshback"}]}, {"name": "Partiu", "offers": [{"type": "Inter Site", "reward": "5% de cacshback"}]}, {"name": "PENALTY", "offers": [{"type": "Inter Site", "reward": "5% de cacshback"}]}, {"name": "Perfect World", "offers": [{"type": "Inter Giftcard", "reward": "7% de cashback no giftcard"}]}, {"name": "Petite jolie", "offers": [{"type": "Inter Site", "reward": "1% de cacshback"}]}, {"name": "Petrobras", "offers": [{"type": "Alelo", "reward": "Desconto por litro"}]}, {"name": "Petrobras Premmia", "offers": [{"type": "Alelo", "reward": "10%"}]}, {"name": "Petyard", "offers": [{"type": "Inter Site", "reward": "4% de cacshback"}]}, {"name": "Giuliana Flores", "offers": [{"type": "Inter Site", "reward": "6% de cacshback"}, {"type": "Inter Giftcard", "reward": "3% de cashback no giftcard"}, {"type": "Alelo", "reward": "15%"}, {"type": "Mastercard", "reward": "Pague 1 Leve 2 / outros"}, {"type": "BB", "reward": "5.5%"}]}, {"name": "PGM Distribuidora", "offers": [{"type": "Inter Cashback", "reward": "8% de cashback"}]}, {"name": "Philco", "offers": [{"type": "Inter Cashback", "reward": "5% de cashback"}, {"type": "Inter Site", "reward": "2% de cacshback"}, {"type": "Alelo", "reward": "10%"}]}, {"name": "Gocase", "offers": [{"type": "Livelo", "reward": "2 pts por R$1"}, {"type": "Inter Site", "reward": "3% de cacshback"}, {"type": "Alelo", "reward": "20%"}, {"type": "Mastercard", "reward": "Pague 1 Leve 2 / outros"}, {"type": "BB", "reward": "4.5%"}]}, {"name": "phooto!", "offers": [{"type": "Inter Site", "reward": "13% de cacshback"}]}, {"name": "Playstation", "offers": [{"type": "Livelo", "reward": "1 pts por R$1"}]}, {"name": "pliè", "offers": [{"type": "Inter Site", "reward": "3% de cacshback"}]}, {"name": "Pneustore", "offers": [{"type": "Inter Cashback", "reward": "6% de cashback"}]}, {"name": "Pobre Juan", "offers": [{"type": "Inter Giftcard", "reward": "4% de cashback no giftcard"}]}, {"name": "Polar", "offers": [{"type": "Inter Cashback", "reward": "2% de cashback"}]}, {"name": "Granado", "offers": [{"type": "Livelo", "reward": "1 pts por R$1"}, {"type": "Inter Site", "reward": "5% de cacshback"}, {"type": "Inter Giftcard", "reward": "3% de cashback no giftcard"}, {"type": "BB", "reward": "3%"}]}, {"name": "Polyvox", "offers": [{"type": "Inter Cashback", "reward": "5% de cashback"}]}, {"name": "Pompéia", "offers": [{"type": "Inter Site", "reward": "5% de cacshback"}]}, {"name": "Ponto", "offers": [{"type": "Inter Cashback", "reward": "7% de cashback"}]}, {"name": "Ponto Frio", "offers": [{"type": "Inter Giftcard", "reward": "2% de cashback no giftcard"}]}, {"name": "POSITIVO (Casa Inteligente)", "offers": [{"type": "Inter Site", "reward": "4% de cacshback"}]}, {"name": "Guess", "offers": [{"type": "Livelo", "reward": "2 pts por R$1"}, {"type": "Inter Site", "reward": "4% de cacshback"}, {"type": "BB", "reward": "4.8%"}]}, {"name": "Prana", "offers": [{"type": "Inter Cashback", "reward": "5% de cashback"}]}, {"name": "Pré-Venda Marvel's Wolverine", "offers": [{"type": "Inter Giftcard", "reward": "5% de cashback no giftcard"}]}, {"name": "PRIORITY PASS", "offers": [{"type": "Inter Site", "reward": "7% de cacshback"}]}, {"name": "Probel", "offers": [{"type": "Inter Site", "reward": "3% de cacshback"}]}, {"name": "Proteína Pura", "offers": [{"type": "Inter Site", "reward": "4% de cacshback"}]}, {"name": "Puket", "offers": [{"type": "Livelo", "reward": "1 pts por R$1"}, {"type": "Mastercard", "reward": "10%"}]}, {"name": "PUMA", "offers": [{"type": "Inter Site", "reward": "6% de cacshback"}]}, {"name": "QATAR AIRWAYS", "offers": [{"type": "Inter Site", "reward": "3% de cacshback"}]}, {"name": "QCompra", "offers": [{"type": "Inter Cashback", "reward": "6% de cashback"}]}, {"name": "QEEQ.COM", "offers": [{"type": "Inter Site", "reward": "3% de cacshback"}]}, {"name": "Qualidoc", "offers": [{"type": "Inter Cashback", "reward": "2% de cashback"}, {"type": "Inter Site", "reward": "1% de cacshback"}]}, {"name": "Quem Disse, Berenice?", "offers": [{"type": "Livelo", "reward": "6 pts por R$1"}, {"type": "Inter Site", "reward": "10% de cacshback"}, {"type": "Inter Giftcard", "reward": "5% de cashback no giftcard"}, {"type": "Mastercard", "reward": "Brinde"}]}, {"name": "Rainbow Six", "offers": [{"type": "Inter Giftcard", "reward": "3% de cashback no giftcard"}]}, {"name": "Rappi", "offers": [{"type": "Inter Giftcard", "reward": "10% de cashback no giftcard"}]}, {"name": "Razer Gold", "offers": [{"type": "Inter Giftcard", "reward": "3% de cashback no giftcard"}]}, {"name": "RBM Webshop", "offers": [{"type": "Inter Cashback", "reward": "2% de cashback"}]}, {"name": "Recarga Pay", "offers": [{"type": "Alelo", "reward": "R$ 30 OFF"}]}, {"name": "Reebok", "offers": [{"type": "Inter Site", "reward": "4.2% de cashback"}]}, {"name": "Renner", "offers": [{"type": "Livelo", "reward": "2 pts por R$1"}, {"type": "Inter Site", "reward": "7% de cacshback"}, {"type": "Inter Giftcard", "reward": "6% de cashback no giftcard"}, {"type": "Alelo", "reward": "15%"}]}, {"name": "Renner Perfumes", "offers": [{"type": "Inter Giftcard", "reward": "3% de cashback no giftcard"}]}, {"name": "Havaianas", "offers": [{"type": "Livelo", "reward": "2 pts por R$1"}, {"type": "Inter Site", "reward": "5% de cacshback"}, {"type": "Inter Giftcard", "reward": "2% de cashback no giftcard"}, {"type": "Mastercard", "reward": "Pague 1 Leve 2"}, {"type": "BB", "reward": "4%"}]}, {"name": "Ri Happy", "offers": [{"type": "Inter Giftcard", "reward": "4% de cashback no giftcard"}]}, {"name": "Richards", "offers": [{"type": "Livelo", "reward": "2 pts por R$1"}, {"type": "Alelo", "reward": "15%"}]}, {"name": "Roblox", "offers": []}, {"name": "Roblox Plus: plano de assinatura", "offers": [{"type": "Inter Giftcard", "reward": "4% de cashback no giftcard"}]}, {"name": "Rockstar", "offers": [{"type": "Inter Giftcard", "reward": "3% de cashback no giftcard"}]}, {"name": "Rovitex", "offers": [{"type": "Inter Cashback", "reward": "2% de cashback"}]}, {"name": "Hering Outlet", "offers": [{"type": "Livelo", "reward": "1 pts por R$1"}, {"type": "Inter Site", "reward": "2% de cacshback"}, {"type": "BB", "reward": "4%"}]}, {"name": "Salon Line", "offers": [{"type": "Alelo", "reward": "10%"}, {"type": "Mastercard", "reward": "15%"}]}, {"name": "Samsonite", "offers": [{"type": "Livelo", "reward": "2 pts por R$1"}]}, {"name": "Santa Lolla", "offers": [{"type": "Inter Giftcard", "reward": "2% de cashback no giftcard"}]}, {"name": "Sawary", "offers": [{"type": "Alelo", "reward": "10%"}]}, {"name": "Scala", "offers": [{"type": "Alelo", "reward": "15%"}]}, {"name": "Schutz", "offers": [{"type": "Inter Giftcard", "reward": "5% de cashback no giftcard"}]}, {"name": "Seara", "offers": [{"type": "Inter Giftcard", "reward": "2% de cashback no giftcard"}]}, {"name": "Seculus", "offers": [{"type": "Inter Cashback", "reward": "4% de cashback"}]}, {"name": "Senhor Urso", "offers": [{"type": "Inter Cashback", "reward": "4% de cashback"}]}, {"name": "HIPERVAREJO", "offers": [{"type": "Inter Site", "reward": "2% de cacshback"}, {"type": "BB", "reward": "1.8%"}]}, {"name": "Shein", "offers": [{"type": "Inter Site", "reward": "10% de cacshback"}]}, {"name": "Shell", "offers": [{"type": "Alelo", "reward": "Desconto por litro"}]}, {"name": "Hoteis.com", "offers": [{"type": "Alelo", "reward": "6%"}, {"type": "Mastercard", "reward": "25%"}, {"type": "BB", "reward": "3.5%"}]}, {"name": "ibbl", "offers": [{"type": "Inter Site", "reward": "2% de cacshback"}, {"type": "BB", "reward": "2%"}]}, {"name": "Skelt", "offers": [{"type": "Inter Site", "reward": "2% de cashback"}, {"type": "Alelo", "reward": "15%"}, {"type": "Mastercard", "reward": "10%"}]}, {"name": "Sky+", "offers": [{"type": "Inter Giftcard", "reward": "3% de cashback no giftcard"}]}, {"name": "Sony PlayStation", "offers": [{"type": "Inter Giftcard", "reward": "3% de cashback no giftcard"}]}, {"name": "Sorte Online", "offers": [{"type": "Inter Giftcard", "reward": "3% de cashback no giftcard"}]}, {"name": "South of Midnight", "offers": [{"type": "Inter Giftcard", "reward": "7% de cashback no giftcard"}]}, {"name": "Sport Club do Recife / FPT", "offers": [{"type": "Inter Site", "reward": "1% de cacshback"}]}, {"name": "St. Marche", "offers": [{"type": "Inter Giftcard", "reward": "2% de cashback no giftcard"}]}, {"name": "INDIVIDUAL", "offers": [{"type": "Inter Site", "reward": "7% de cacshback"}, {"type": "BB", "reward": "6%"}]}, {"name": "Steam", "offers": [{"type": "Inter Giftcard", "reward": "2% de cashback no giftcard"}]}, {"name": "Studio Z", "offers": [{"type": "Livelo", "reward": "1 pts por R$1"}, {"type": "Inter Site", "reward": "3% de cacshback"}]}, {"name": "Suggar", "offers": [{"type": "Inter Cashback", "reward": "2% de cashback"}]}, {"name": "Super Mario Maker 2", "offers": [{"type": "Inter Giftcard", "reward": "4% de cashback no giftcard"}]}, {"name": "Super Mario Party Jamboree", "offers": [{"type": "Inter Giftcard", "reward": "4% de cashback no giftcard"}]}, {"name": "Super Mario RPG", "offers": [{"type": "Inter Giftcard", "reward": "4% de cashback no giftcard"}]}, {"name": "taQi", "offers": [{"type": "Inter Cashback", "reward": "7% de cashback"}]}, {"name": "TCL SEMP", "offers": [{"type": "Inter Cashback", "reward": "7% de cashback"}]}, {"name": "Infinix", "offers": [{"type": "Inter Site", "reward": "5% de cacshback"}, {"type": "BB", "reward": "2.5%"}]}, {"name": "Temu", "offers": [{"type": "Inter Site", "reward": "5% de cacshback"}]}, {"name": "The Legend of Zelda: Breath of the Wild", "offers": [{"type": "Inter Giftcard", "reward": "4% de cashback no giftcard"}]}, {"name": "The Legend of Zelda: Tears of the Kingdom", "offers": [{"type": "Inter Giftcard", "reward": "4% de cashback no giftcard"}]}, {"name": "TIP TOP", "offers": [{"type": "Inter Giftcard", "reward": "2% de cashback no giftcard"}]}, {"name": "Tok&Stok", "offers": [{"type": "Inter Site", "reward": "1% de cacshback"}, {"type": "Inter Giftcard", "reward": "3% de cashback no giftcard"}, {"type": "Alelo", "reward": "8%"}]}, {"name": "Tom Clancy's Rainbow Six Siege", "offers": []}, {"name": "Tommy Hilfiger", "offers": [{"type": "Inter Site", "reward": "2% de cashback"}]}, {"name": "TORRA", "offers": [{"type": "Inter Site", "reward": "3% de cacshback"}]}, {"name": "Trilha Esportes", "offers": [{"type": "Inter Cashback", "reward": "2% de cashback"}]}, {"name": "Trilha Sports", "offers": [{"type": "Inter Cashback", "reward": "5% de cashback"}]}, {"name": "Tripadvisor", "offers": [{"type": "Inter Site", "reward": "2% de cashback"}]}, {"name": "Insider", "offers": [{"type": "Inter Site", "reward": "4% de cacshback"}, {"type": "Alelo", "reward": "18%"}, {"type": "Mastercard", "reward": "18%"}, {"type": "BB", "reward": "3%"}]}, {"name": "INTEGRALMEDICA", "offers": [{"type": "Inter Site", "reward": "3% de cacshback"}, {"type": "BB", "reward": "3%"}]}, {"name": "Uber", "offers": [{"type": "Inter Giftcard", "reward": "3% de cashback no giftcard"}]}, {"name": "UCI", "offers": [{"type": "Inter Giftcard", "reward": "3% de cashback no giftcard"}]}, {"name": "Ultragaz", "offers": [{"type": "Inter Giftcard", "reward": "5% de cashback no giftcard"}]}, {"name": "intimissimi", "offers": [{"type": "Inter Site", "reward": "5% de cacshback"}, {"type": "Alelo", "reward": "4.8% de crédito"}, {"type": "BB", "reward": "2.5%"}]}, {"name": "Usaflex", "offers": [{"type": "Inter Site", "reward": "4% de cashback"}]}, {"name": "Use Orgânico", "offers": [{"type": "Inter Cashback", "reward": "5% de cashback"}]}, {"name": "Utensílios do Chef", "offers": [{"type": "Inter Cashback", "reward": "3% de cashback"}]}, {"name": "Valorant", "offers": [{"type": "Inter Giftcard", "reward": "2% de cashback no giftcard"}]}, {"name": "Vans", "offers": [{"type": "Inter Giftcard", "reward": "5% de cashback no giftcard"}]}, {"name": "Verace", "offers": [{"type": "Inter Cashback", "reward": "5% de cashback"}]}, {"name": "Vértice", "offers": [{"type": "Inter Cashback", "reward": "5% de cashback"}]}, {"name": "Vianet Comércio", "offers": [{"type": "Inter Cashback", "reward": "8% de cashback"}]}, {"name": "Victorinox", "offers": [{"type": "Inter Cashback", "reward": "2% de cashback"}]}, {"name": "Vila Romana", "offers": [{"type": "Inter Giftcard", "reward": "2% de cashback no giftcard"}]}, {"name": "Iplace", "offers": [{"type": "Inter Cashback", "reward": "4% de cashback"}, {"type": "Inter Site", "reward": "1% de cacshback"}, {"type": "Mastercard", "reward": "R$30 OFF"}, {"type": "BB", "reward": "1%"}]}, {"name": "VX Case", "offers": [{"type": "Inter Site", "reward": "8% de cashback"}]}, {"name": "Wala Place", "offers": [{"type": "Inter Cashback", "reward": "2% de cashback"}]}, {"name": "Walita", "offers": [{"type": "Alelo", "reward": "7%"}]}, {"name": "Wario Ware: Move It!", "offers": [{"type": "Inter Giftcard", "reward": "4% de cashback no giftcard"}]}, {"name": "We Coffee", "offers": [{"type": "Inter Giftcard", "reward": "4% de cashback no giftcard"}]}, {"name": "JBL", "offers": [{"type": "Inter Cashback", "reward": "10% de cashback"}, {"type": "Inter Site", "reward": "8% de cacshback"}, {"type": "BB", "reward": "2.6%"}]}, {"name": "Xbox", "offers": [{"type": "Inter Giftcard", "reward": "5% de cashback no giftcard"}]}, {"name": "Xbox Game Pass Essential", "offers": [{"type": "Inter Giftcard", "reward": "9% de cashback no giftcard"}]}, {"name": "Xbox Game Pass Premium", "offers": [{"type": "Inter Giftcard", "reward": "5% de cashback no giftcard"}]}, {"name": "Xbox Game Pass Ultimate", "offers": [{"type": "Inter Giftcard", "reward": "5% de cashback no giftcard"}]}, {"name": "Xenoblade Chronicles 2", "offers": [{"type": "Inter Giftcard", "reward": "4% de cashback no giftcard"}]}, {"name": "Xiaomi", "offers": [{"type": "Inter Cashback", "reward": "4% de cashback"}]}, {"name": "You Com", "offers": [{"type": "Inter Site", "reward": "4% de cashback"}, {"type": "Alelo", "reward": "10%"}]}, {"name": "JO MALONE", "offers": [{"type": "Inter Site", "reward": "5% de cacshback"}, {"type": "BB", "reward": "6%"}]}, {"name": "Zé Delivery", "offers": [{"type": "Inter Giftcard", "reward": "3% de cashback no giftcard"}]}, {"name": "Zift - Cartão Multimarcas", "offers": [{"type": "Inter Giftcard", "reward": "8% de cashback no giftcard"}]}, {"name": "ZZ Mall", "offers": [{"type": "Inter Giftcard", "reward": "3% de cashback no giftcard"}, {"type": "Mastercard", "reward": "R$ 300 OFF"}]}, {"name": "Grupo Boticário", "offers": [{"type": "Mastercard", "reward": "10% / Pague 1 Leve 2"}]}, {"name": "The North Face", "offers": [{"type": "Mastercard", "reward": "10%"}]}, {"name": "Jequiti", "offers": [{"type": "Mastercard", "reward": "15%"}]}, {"name": "Ikesaki", "offers": [{"type": "Mastercard", "reward": "15% / outros"}]}, {"name": "Contém 1g", "offers": [{"type": "Mastercard", "reward": "R$30 OFF"}]}, {"name": "Imaginarium", "offers": [{"type": "Mastercard", "reward": "10%"}]}, {"name": "Pizza Hut", "offers": [{"type": "Mastercard", "reward": "20%"}]}, {"name": "Tramontina", "offers": [{"type": "Mastercard", "reward": "Pague 1 Leve 2"}]}, {"name": "China in Box", "offers": [{"type": "Mastercard", "reward": "20%"}]}, {"name": "3 Corações", "offers": [{"type": "Mastercard", "reward": "Pague 1 Leve 2"}]}, {"name": "NordVPN", "offers": [{"type": "Mastercard", "reward": "75%"}]}, {"name": "KaBuM!", "offers": [{"type": "Inter Cashback", "reward": "5% de cashback"}, {"type": "Inter Site", "reward": "1.61% de cashback"}, {"type": "Inter Giftcard", "reward": "7% de cashback no giftcard"}, {"type": "Alelo", "reward": "20%"}, {"type": "BB", "reward": "1%"}]}, {"name": "Coral", "offers": [{"type": "Mastercard", "reward": "10%"}]}, {"name": "Maria Filó", "offers": [{"type": "Mastercard", "reward": "15%"}]}, {"name": "Karsten", "offers": [{"type": "Inter Site", "reward": "5% de cacshback"}, {"type": "Alelo", "reward": "10%"}, {"type": "BB", "reward": "2%"}]}, {"name": "Magazine Luiza", "offers": [{"type": "BB", "reward": "8%"}]}, {"name": "kaspersky", "offers": [{"type": "Inter Site", "reward": "10% de cacshback"}, {"type": "BB", "reward": "12%"}]}, {"name": "Kipling", "offers": [{"type": "Inter Site", "reward": "4% de cacshback"}, {"type": "BB", "reward": "4%"}]}, {"name": "Monte Carlo Joias", "offers": [{"type": "BB", "reward": "4.5%"}]}, {"name": "Lojas Renner", "offers": [{"type": "BB", "reward": "5%"}]}, {"name": "KitchenAid", "offers": [{"type": "Inter Cashback", "reward": "5% de cashback"}, {"type": "BB", "reward": "1.8%"}]}, {"name": "Lacoste", "offers": [{"type": "Livelo", "reward": "2 pts por R$1"}, {"type": "Inter Site", "reward": "2% de cacshback"}, {"type": "Alelo", "reward": "5%"}, {"type": "BB", "reward": "2%"}]}, {"name": "Allu.", "offers": [{"type": "BB", "reward": "15%"}]}, {"name": "Amazon.com.br", "offers": [{"type": "BB", "reward": "-"}]}, {"name": "LE LIS", "offers": [{"type": "Inter Site", "reward": "6% de cacshback"}, {"type": "Alelo", "reward": "10%"}, {"type": "Mastercard", "reward": "10%"}, {"type": "BB", "reward": "5%"}]}, {"name": "Lego", "offers": [{"type": "Livelo", "reward": "1 pts por R$1"}, {"type": "Inter Cashback", "reward": "4% de cashback"}, {"type": "Inter Site", "reward": "4% de cacshback"}, {"type": "Inter Giftcard", "reward": "3% de cashback no giftcard"}, {"type": "Mastercard", "reward": "R$100 OFF"}, {"type": "BB", "reward": "3.5%"}]}, {"name": "ArtWalk", "offers": [{"type": "BB", "reward": "2%"}]}, {"name": "Lenovo", "offers": [{"type": "Inter Cashback", "reward": "6% de cashback"}, {"type": "Inter Site", "reward": "3% de cacshback"}, {"type": "BB", "reward": "1.3%"}]}, {"name": "Authentic Feet", "offers": [{"type": "BB", "reward": "2%"}]}, {"name": "Avell", "offers": [{"type": "BB", "reward": "0.8%"}]}, {"name": "LEROY MERLIN", "offers": [{"type": "Inter Site", "reward": "1% de cacshback"}, {"type": "BB", "reward": "1.3%"}]}, {"name": "Baggio Café", "offers": [{"type": "BB", "reward": "4.5%"}]}, {"name": "Benoit", "offers": [{"type": "BB", "reward": "2.5%"}]}, {"name": "Biscoitê", "offers": [{"type": "BB", "reward": "2%"}]}, {"name": "LEVEROS", "offers": [{"type": "Inter Site", "reward": "1% de cacshback"}, {"type": "BB", "reward": "1.5%"}]}, {"name": "Buser", "offers": [{"type": "BB", "reward": "4%"}]}, {"name": "C&A", "offers": [{"type": "BB", "reward": "15%"}]}, {"name": "Café L'Or", "offers": [{"type": "BB", "reward": "3.5%"}]}, {"name": "LG", "offers": [{"type": "Inter Cashback", "reward": "2% de cashback"}, {"type": "Inter Site", "reward": "12% de cacshback"}, {"type": "Alelo", "reward": "50%"}, {"type": "BB", "reward": "1%"}]}, {"name": "Calzedonia", "offers": [{"type": "BB", "reward": "2.5%"}]}, {"name": "Cama in Box", "offers": [{"type": "BB", "reward": "2%"}]}, {"name": "Live!", "offers": [{"type": "Inter Cashback", "reward": "5% de cashback"}, {"type": "Inter Site", "reward": "5% de cacshback"}, {"type": "Alelo", "reward": "10%"}, {"type": "Mastercard", "reward": "15%"}, {"type": "BB", "reward": "4%"}]}, {"name": "Casa Inteligente", "offers": [{"type": "BB", "reward": "3%"}]}, {"name": "Casa Tema", "offers": [{"type": "BB", "reward": "2%"}]}, {"name": "Caudalie", "offers": [{"type": "BB", "reward": "1%"}]}, {"name": "Central Ar", "offers": [{"type": "BB", "reward": "1.5%"}]}, {"name": "Liz", "offers": [{"type": "Livelo", "reward": "1 pts por R$1"}, {"type": "Inter Site", "reward": "6% de cacshback"}, {"type": "BB", "reward": "4%"}]}, {"name": "Clovis Calçados", "offers": [{"type": "BB", "reward": "4.5%"}]}, {"name": "Coffee ++", "offers": [{"type": "BB", "reward": "3%"}]}, {"name": "Contém1g", "offers": [{"type": "BB", "reward": "2.8%"}]}, {"name": "Localiza", "offers": [{"type": "Inter Site", "reward": "8% de cacshback"}, {"type": "BB", "reward": "3%"}]}, {"name": "CPAPS", "offers": [{"type": "BB", "reward": "0.5%"}]}, {"name": "L'Occitane au Brésil", "offers": [{"type": "Livelo", "reward": "1 pts por R$1"}, {"type": "Inter Site", "reward": "10% de cacshback"}, {"type": "Inter Giftcard", "reward": "3% de cashback no giftcard"}, {"type": "Alelo", "reward": "10%"}, {"type": "Mastercard", "reward": "Pague 1 Leve 2"}, {"type": "BB", "reward": "8%"}]}, {"name": "Daikin", "offers": [{"type": "BB", "reward": "1.2%"}]}, {"name": "Decanter Vinhos", "offers": [{"type": "BB", "reward": "4.5%"}]}, {"name": "L'Occitane en Provence", "offers": [{"type": "Livelo", "reward": "1 pts por R$1"}, {"type": "Inter Site", "reward": "10% de cacshback"}, {"type": "Inter Giftcard", "reward": "3% de cashback no giftcard"}, {"type": "Alelo", "reward": "10%"}, {"type": "Mastercard", "reward": "Pague 1 Leve 2"}, {"type": "BB", "reward": "8%"}]}, {"name": "Decor Colors", "offers": [{"type": "BB", "reward": "3.5%"}]}, {"name": "Dentro da História", "offers": [{"type": "BB", "reward": "3.5%"}]}, {"name": "Deônibus", "offers": [{"type": "BB", "reward": "4%"}]}, {"name": "Descorcha", "offers": [{"type": "BB", "reward": "3.8%"}]}, {"name": "Loja do Inter", "offers": [{"type": "Inter Cashback", "reward": "2% de cashback"}, {"type": "BB", "reward": "2%"}]}, {"name": "Loja do Mecânico", "offers": [{"type": "Inter Site", "reward": "1% de cacshback"}, {"type": "BB", "reward": "1.3%"}]}, {"name": "Lojas Lebes", "offers": [{"type": "Inter Site", "reward": "3% de cacshback"}, {"type": "BB", "reward": "2.6%"}]}, {"name": "magic feet", "offers": [{"type": "Inter Site", "reward": "1% de cacshback"}, {"type": "BB", "reward": "2%"}]}, {"name": "Drogaria Venâncio", "offers": [{"type": "BB", "reward": "1%"}]}, {"name": "Malwee", "offers": [{"type": "Livelo", "reward": "2 pts por R$1"}, {"type": "Inter Site", "reward": "6% de cacshback"}, {"type": "BB", "reward": "3%"}]}, {"name": "Mascavo", "offers": [{"type": "Inter Site", "reward": "10% de cacshback"}, {"type": "Mastercard", "reward": "15%"}, {"type": "BB", "reward": "5%"}]}, {"name": "Elements", "offers": [{"type": "BB", "reward": "3%"}]}, {"name": "Elens", "offers": [{"type": "BB", "reward": "3%"}]}, {"name": "Emma", "offers": [{"type": "BB", "reward": "1.8%"}]}, {"name": "Midea", "offers": [{"type": "Inter Cashback", "reward": "7% de cashback"}, {"type": "Inter Site", "reward": "1% de cacshback"}, {"type": "Mastercard", "reward": "8%"}, {"type": "BB", "reward": "1.2%"}]}, {"name": "Mizuno", "offers": [{"type": "Inter Cashback", "reward": "7% de cashback"}, {"type": "Inter Site", "reward": "2% de cacshback"}, {"type": "Inter Giftcard", "reward": "2% de cashback no giftcard"}, {"type": "Alelo", "reward": "10%"}, {"type": "Mastercard", "reward": "15%"}, {"type": "BB", "reward": "3%"}]}, {"name": "Motorola", "offers": [{"type": "Inter Cashback", "reward": "4% de cashback"}, {"type": "Inter Site", "reward": "1% de cacshback"}, {"type": "BB", "reward": "2%"}]}, {"name": "Expedia", "offers": [{"type": "BB", "reward": "2.3%"}]}, {"name": "Movida", "offers": [{"type": "Inter Site", "reward": "10% de cacshback"}, {"type": "BB", "reward": "-"}]}, {"name": "Farm Rio", "offers": [{"type": "BB", "reward": "2.3%"}]}, {"name": "Farmácias Indiana", "offers": [{"type": "BB", "reward": "3%"}]}, {"name": "MUNDOS INFINITOS", "offers": [{"type": "Inter Site", "reward": "5% de cacshback"}, {"type": "BB", "reward": "2.5%"}]}, {"name": "Nars", "offers": [{"type": "Livelo", "reward": "3 pts por R$1"}, {"type": "Inter Site", "reward": "7% de cacshback"}, {"type": "BB", "reward": "6.5%"}]}, {"name": "Natura", "offers": [{"type": "Livelo", "reward": "4 pts por R$1"}, {"type": "Inter Cashback", "reward": "7% de cashback"}, {"type": "Inter Site", "reward": "12% de cacshback"}, {"type": "Alelo", "reward": "20%"}, {"type": "Mastercard", "reward": "60% / outros"}, {"type": "BB", "reward": "8%"}]}, {"name": "Nespresso", "offers": [{"type": "Inter Site", "reward": "3.5% de cacshback"}, {"type": "BB", "reward": "2.5%"}]}, {"name": "Ga.Ma Italy", "offers": [{"type": "BB", "reward": "6%"}]}, {"name": "Netshoes", "offers": [{"type": "Livelo", "reward": "2 pts por R$1"}, {"type": "Inter Cashback", "reward": "8% de cashback"}, {"type": "Inter Site", "reward": "10% de cacshback"}, {"type": "Inter Giftcard", "reward": "4% de cashback no giftcard"}, {"type": "Mastercard", "reward": "18% / 60%"}, {"type": "BB", "reward": "4%"}]}, {"name": "GrandVision", "offers": [{"type": "BB", "reward": "2.5%"}]}, {"name": "New Balance", "offers": [{"type": "Livelo", "reward": "2 pts por R$1"}, {"type": "Inter Site", "reward": "5% de cacshback"}, {"type": "Alelo", "reward": "10%"}, {"type": "Mastercard", "reward": "30%"}, {"type": "BB", "reward": "4.5%"}]}, {"name": "Nike", "offers": [{"type": "Livelo", "reward": "2 pts por R$1"}, {"type": "Inter Site", "reward": "2% de cacshback"}, {"type": "Inter Giftcard", "reward": "2% de cashback no giftcard"}, {"type": "Alelo", "reward": "5%"}, {"type": "Mastercard", "reward": "10%"}, {"type": "BB", "reward": "2%"}]}, {"name": "Hope Resort", "offers": [{"type": "BB", "reward": "4%"}]}, {"name": "Nuuvem", "offers": [{"type": "Inter Site", "reward": "1% de cacshback"}, {"type": "BB", "reward": "1.2%"}]}, {"name": "O Boticário", "offers": [{"type": "Livelo", "reward": "3 pts por R$1"}, {"type": "Inter Site", "reward": "4.2% de cacshback"}, {"type": "Inter Giftcard", "reward": "10% de cashback no giftcard"}, {"type": "Alelo", "reward": "15% / 12%"}, {"type": "BB", "reward": "4.2%"}]}, {"name": "Olympikus", "offers": [{"type": "Inter Cashback", "reward": "7% de cashback"}, {"type": "Inter Site", "reward": "7% de cacshback"}, {"type": "Inter Giftcard", "reward": "3% de cashback no giftcard"}, {"type": "Alelo", "reward": "15% / 10%"}, {"type": "Mastercard", "reward": "15%"}, {"type": "BB", "reward": "3%"}]}, {"name": "OQVESTIR", "offers": [{"type": "Inter Site", "reward": "4% de cacshback"}, {"type": "Alelo", "reward": "10%"}, {"type": "BB", "reward": "3%"}]}, {"name": "OSKLEN", "offers": [{"type": "Inter Site", "reward": "5% de cacshback"}, {"type": "BB", "reward": "3%"}]}, {"name": "JohnJohn", "offers": [{"type": "BB", "reward": "5%"}]}, {"name": "Pague Menos", "offers": [{"type": "Inter Site", "reward": "3% de cashback"}, {"type": "Inter Giftcard", "reward": "2% de cashback no giftcard"}, {"type": "Alelo", "reward": "40%"}, {"type": "BB", "reward": "3%"}]}, {"name": "Panasonic", "offers": [{"type": "Inter Cashback", "reward": "7% de cashback"}, {"type": "Inter Site", "reward": "1% de cacshback"}, {"type": "BB", "reward": "1.2%"}]}, {"name": "Petlove", "offers": [{"type": "Livelo", "reward": "2 pts por R$1"}, {"type": "Inter Cashback", "reward": "2% de cashback"}, {"type": "Inter Site", "reward": "1% de cacshback"}, {"type": "Inter Giftcard", "reward": "2% de cashback no giftcard"}, {"type": "Mastercard", "reward": "100%"}, {"type": "BB", "reward": "3%"}]}, {"name": "Petz", "offers": [{"type": "Livelo", "reward": "2 pts por R$1"}, {"type": "Inter Site", "reward": "2% de cacshback"}, {"type": "Inter Giftcard", "reward": "3% de cashback no giftcard"}, {"type": "Alelo", "reward": "10%"}, {"type": "Mastercard", "reward": "10%"}, {"type": "BB", "reward": "2.5%"}]}, {"name": "Phebo", "offers": [{"type": "Inter Site", "reward": "3% de cacshback"}, {"type": "BB", "reward": "3%"}]}, {"name": "PHILIPS WALITA", "offers": [{"type": "Inter Site", "reward": "3% de cacshback"}, {"type": "Alelo", "reward": "10%"}, {"type": "BB", "reward": "2%"}]}, {"name": "Pilão", "offers": [{"type": "Inter Site", "reward": "4.9% de cacshback"}, {"type": "BB", "reward": "3.5%"}]}, {"name": "Polishop", "offers": [{"type": "Inter Cashback", "reward": "10% de cashback"}, {"type": "Inter Site", "reward": "3% de cacshback"}, {"type": "BB", "reward": "0.7%"}]}, {"name": "Loja do Cruzeiro", "offers": [{"type": "BB", "reward": "2%"}]}, {"name": "Positivo", "offers": [{"type": "Inter Cashback", "reward": "7% de cashback"}, {"type": "Inter Site", "reward": "4% de cacshback"}, {"type": "Mastercard", "reward": "60%"}, {"type": "BB", "reward": "3%"}]}, {"name": "Loja do Santos", "offers": [{"type": "BB", "reward": "2%"}]}, {"name": "Loja Madesa", "offers": [{"type": "BB", "reward": "3.5%"}]}, {"name": "Loja NBA", "offers": [{"type": "BB", "reward": "2%"}]}, {"name": "Loja PST", "offers": [{"type": "BB", "reward": "2%"}]}, {"name": "Posthaus", "offers": [{"type": "Inter Site", "reward": "4% de cacshback"}, {"type": "BB", "reward": "3%"}]}, {"name": "Lojas Torra", "offers": [{"type": "BB", "reward": "2.5%"}]}, {"name": "MAC Cosmetics", "offers": [{"type": "BB", "reward": "5.5%"}]}, {"name": "Madeira Madeira", "offers": [{"type": "BB", "reward": "0.6%"}]}, {"name": "Rentcars", "offers": [{"type": "Inter Site", "reward": "4% de cacshback"}, {"type": "BB", "reward": "4%"}]}, {"name": "Reserva", "offers": [{"type": "Livelo", "reward": "2 pts por R$1"}, {"type": "Inter Site", "reward": "3% de cacshback"}, {"type": "Inter Giftcard", "reward": "1% de cashback no giftcard"}, {"type": "Mastercard", "reward": "R$50 OFF"}, {"type": "BB", "reward": "4%"}]}, {"name": "Mistral", "offers": [{"type": "BB", "reward": "3%"}]}, {"name": "Riachuelo", "offers": [{"type": "Livelo", "reward": "5 pts por R$1"}, {"type": "Inter Site", "reward": "4% de cacshback"}, {"type": "Inter Giftcard", "reward": "15% de cashback no giftcard"}, {"type": "Alelo", "reward": "12% / 10%"}, {"type": "Mastercard", "reward": "12%"}, {"type": "BB", "reward": "3%"}]}, {"name": "Multilaser", "offers": [{"type": "BB", "reward": "3.2%"}]}, {"name": "Sallve", "offers": [{"type": "Inter Site", "reward": "3% de cashback"}, {"type": "Mastercard", "reward": "10%"}, {"type": "BB", "reward": "2.8%"}]}, {"name": "Samsung", "offers": [{"type": "Inter Cashback", "reward": "5% de cashback"}, {"type": "Inter Site", "reward": "1% de cashback"}, {"type": "Alelo", "reward": "10%"}, {"type": "BB", "reward": "1.5%"}]}, {"name": "Sephora", "offers": [{"type": "Livelo", "reward": "1 pts por R$1"}, {"type": "Inter Site", "reward": "3.5% de cacshback"}, {"type": "Alelo", "reward": "10%"}, {"type": "Mastercard", "reward": "10%"}, {"type": "BB", "reward": "2.5%"}]}, {"name": "Sestini", "offers": [{"type": "Inter Site", "reward": "4% de cashback"}, {"type": "Alelo", "reward": "10%"}, {"type": "BB", "reward": "5%"}]}, {"name": "Shiseido", "offers": [{"type": "Livelo", "reward": "3 pts por R$1"}, {"type": "Inter Site", "reward": "8.5% de cacshback"}, {"type": "BB", "reward": "7%"}]}, {"name": "Oceane", "offers": [{"type": "BB", "reward": "4%"}]}, {"name": "OffPremium", "offers": [{"type": "BB", "reward": "3.5%"}]}, {"name": "Opaque", "offers": [{"type": "BB", "reward": "4.5%"}]}, {"name": "Shop2Gether", "offers": [{"type": "Inter Site", "reward": "4% de cashback"}, {"type": "BB", "reward": "3%"}]}, {"name": "Oui Paris", "offers": [{"type": "BB", "reward": "3.5%"}]}, {"name": "Shopee", "offers": [{"type": "Livelo", "reward": "2 pts por R$1"}, {"type": "Inter Site", "reward": "7% de cacshback"}, {"type": "Inter Giftcard", "reward": "9% de cashback no giftcard"}, {"type": "Mastercard", "reward": "R$20 OFF"}, {"type": "BB", "reward": "2%"}]}, {"name": "Perfumaria Sumirê", "offers": [{"type": "BB", "reward": "4%"}]}, {"name": "Spicy", "offers": [{"type": "Inter Cashback", "reward": "4% de cashback"}, {"type": "Inter Giftcard", "reward": "4% de cashback no giftcard"}, {"type": "BB", "reward": "3%"}]}, {"name": "Stanley", "offers": [{"type": "Inter Site", "reward": "5% de cacshback"}, {"type": "Alelo", "reward": "10%"}, {"type": "Mastercard", "reward": "Pague 1 Leve 2 / outros"}, {"type": "BB", "reward": "4%"}]}, {"name": "Phooto", "offers": [{"type": "BB", "reward": "4.8%"}]}, {"name": "Suvinil", "offers": [{"type": "Inter Site", "reward": "5.5% de cashback"}, {"type": "BB", "reward": "4%"}]}, {"name": "Plié", "offers": [{"type": "BB", "reward": "3.5%"}]}, {"name": "PM3", "offers": [{"type": "BB", "reward": "4.5%"}]}, {"name": "Technos", "offers": [{"type": "Inter Site", "reward": "5% de cacshback"}, {"type": "Inter Giftcard", "reward": "5% de cashback no giftcard"}, {"type": "Alelo", "reward": "10%"}, {"type": "BB", "reward": "4%"}]}, {"name": "Promofarma", "offers": [{"type": "BB", "reward": "4%"}]}, {"name": "Quem disse Berenice", "offers": [{"type": "BB", "reward": "5.5%"}]}, {"name": "Quero Passagem", "offers": [{"type": "BB", "reward": "2.8%"}]}, {"name": "Too Faced", "offers": [{"type": "Inter Site", "reward": "8.4% de cashback"}, {"type": "BB", "reward": "7%"}]}, {"name": "Toshiba", "offers": [{"type": "Mastercard", "reward": "5%"}, {"type": "BB", "reward": "2.5%"}]}, {"name": "Sanavita", "offers": [{"type": "BB", "reward": "4%"}]}, {"name": "SÃO Store", "offers": [{"type": "BB", "reward": "2%"}]}, {"name": "Trocafone", "offers": [{"type": "Inter Cashback", "reward": "15% de cashback"}, {"type": "Inter Site", "reward": "1% de cacshback"}, {"type": "Mastercard", "reward": "10%"}, {"type": "BB", "reward": "1.2%"}]}, {"name": "Trocafy", "offers": [{"type": "Inter Site", "reward": "6% de cashback"}, {"type": "Mastercard", "reward": "5%"}, {"type": "BB", "reward": "3%"}]}, {"name": "Shop Timão", "offers": [{"type": "BB", "reward": "2%"}]}, {"name": "ShopClub", "offers": [{"type": "BB", "reward": "0.5%"}]}, {"name": "Truss", "offers": [{"type": "Livelo", "reward": "3 pts por R$1"}, {"type": "Inter Site", "reward": "6% de cacshback"}, {"type": "BB", "reward": "4%"}]}, {"name": "Umbro", "offers": [{"type": "Inter Site", "reward": "5.5% de cashback"}, {"type": "Alelo", "reward": "10%"}, {"type": "Mastercard", "reward": "25%"}, {"type": "BB", "reward": "4.5%"}]}, {"name": "Under Armour", "offers": [{"type": "Inter Cashback", "reward": "7% de cashback"}, {"type": "Inter Site", "reward": "4% de cacshback"}, {"type": "Inter Giftcard", "reward": "3% de cashback no giftcard"}, {"type": "Alelo", "reward": "10%"}, {"type": "Mastercard", "reward": "15%"}, {"type": "BB", "reward": "3%"}]}, {"name": "Time Center", "offers": [{"type": "BB", "reward": "4%"}]}, {"name": "Vaio", "offers": [{"type": "Inter Site", "reward": "1% de cashback"}, {"type": "BB", "reward": "2.5%"}]}, {"name": "Vivara", "offers": [{"type": "Livelo", "reward": "1 pts por R$1"}, {"type": "Inter Site", "reward": "10% de cacshback"}, {"type": "Inter Giftcard", "reward": "2% de cashback no giftcard"}, {"type": "BB", "reward": "2%"}]}, {"name": "Trussardi", "offers": [{"type": "BB", "reward": "2%"}]}, {"name": "Vult", "offers": [{"type": "Inter Giftcard", "reward": "8% de cashback no giftcard"}, {"type": "Alelo", "reward": "15%"}, {"type": "BB", "reward": "6%"}]}, {"name": "Unidas", "offers": [{"type": "BB", "reward": "3%"}]}, {"name": "Webcontinental", "offers": [{"type": "Inter Cashback", "reward": "5% de cashback"}, {"type": "BB", "reward": "3%"}]}, {"name": "Viaza", "offers": [{"type": "BB", "reward": "1.3%"}]}, {"name": "Vou Levar", "offers": [{"type": "BB", "reward": "1%"}]}, {"name": "World Tennis", "offers": [{"type": "Alelo", "reward": "5%"}, {"type": "BB", "reward": "3.5%"}]}, {"name": "Webfones", "offers": [{"type": "BB", "reward": "3%"}]}, {"name": "Weleda", "offers": [{"type": "BB", "reward": "2.5%"}]}, {"name": "Westwing", "offers": [{"type": "BB", "reward": "2.5%"}]}, {"name": "Wine", "offers": [{"type": "BB", "reward": "3%"}]}, {"name": "Zattini", "offers": [{"type": "Inter Cashback", "reward": "5% de cashback"}, {"type": "Inter Site", "reward": "3.5% de cashback"}, {"type": "Inter Giftcard", "reward": "5% de cashback no giftcard"}, {"type": "BB", "reward": "3%"}]}, {"name": "Yamamura", "offers": [{"type": "BB", "reward": "3%"}]}, {"name": "YouCom", "offers": [{"type": "BB", "reward": "4.5%"}]}, {"name": "Zarpo", "offers": [{"type": "BB", "reward": "2%"}]}, {"name": "Zee Dog", "offers": [{"type": "BB", "reward": "2%"}]}, {"name": "Zee Now", "offers": [{"type": "BB", "reward": "2%"}]}, {"name": "Zupper", "offers": [{"type": "BB", "reward": "1.2%"}]}];
-        const programs = ["Livelo", "Inter Cashback", "Inter Site", "Inter Giftcard", "Vale", "Alelo", "Mastercard", "Itaú", "Recarga Pay", "BB"];
+  <div id="cardsContainer" class="cards-grid"></div>
 
-        const searchInput = document.getElementById('searchInput');
-        const sortSelect = document.getElementById('sortSelect');
-        const filterSelect = document.getElementById('filterSelect');
-        const storeList = document.getElementById('storeList');
-        const counter = document.getElementById('counter');
+  <script>
+    // Substitua este array pelo JSON gerado a partir da sua planilha
+    const storesData = [/* DADOS_JSON_DA_PLANILHA */];
 
-        // Preencher o seletor de filtros com os programas disponíveis
-        programs.forEach(program => {
-            const option = document.createElement('option');
-            option.value = program;
-            option.textContent = program;
-            filterSelect.appendChild(option);
+    const searchInput = document.getElementById('searchInput');
+    const catSelect = document.getElementById('catSelect');
+    const subcatSelect = document.getElementById('subcatSelect');
+    const sortSelect = document.getElementById('sortSelect');
+    const cardsContainer = document.getElementById('cardsContainer');
+    const storeCounter = document.getElementById('storeCounter');
+
+    function initCategories() {
+      const categories = [...new Set(storesData.map(item => item.cat).filter(Boolean))].sort();
+      categories.forEach(cat => {
+        const opt = document.createElement('option');
+        opt.value = cat;
+        opt.textContent = cat;
+        catSelect.appendChild(opt);
+      });
+      updateSubcategoryOptions();
+    }
+
+    function updateSubcategoryOptions() {
+      const selectedCat = catSelect.value;
+      const currentSubcat = subcatSelect.value;
+
+      let relevantStores = storesData;
+      if (selectedCat) {
+        relevantStores = storesData.filter(s => s.cat === selectedCat);
+      }
+
+      const subcategories = [...new Set(relevantStores.map(item => item.subcat).filter(Boolean))].sort();
+
+      subcatSelect.innerHTML = '<option value="">Todas as Subcategorias</option>';
+
+      if (subcategories.length > 0) {
+        subcatSelect.disabled = false;
+        subcategories.forEach(subcat => {
+          const opt = document.createElement('option');
+          opt.value = subcat;
+          opt.textContent = subcat;
+          subcatSelect.appendChild(opt);
         });
 
-        function render() {
-            const searchTerm = searchInput.value.toLowerCase().trim();
-            const sortVal = sortSelect.value;
-            const filterVal = filterSelect.value;
-
-            // Filtro (por busca de nome da loja e por categoria de programa)
-            let filteredStores = initialStores.filter(store => {
-                const matchesSearch = store.name.toLowerCase().includes(searchTerm);
-                // Se o filtro for 'all', mostra as lojas que têm pelo menos uma oferta na busca,
-                // OU se tiver um filtro específico, a loja precisa ter oferta naquele programa.
-                const matchesFilter = filterVal === 'all' || store.offers.some(o => o.type === filterVal);
-                
-                // Só exibir lojas que possuem pelo menos 1 benefício listado
-                const hasAnyOffer = store.offers.length > 0;
-                
-                return matchesSearch && matchesFilter && hasAnyOffer;
-            });
-
-            // Ordenação A-Z ou Z-A
-            filteredStores.sort((a, b) => {
-                if (sortVal === 'az') return a.name.localeCompare(b.name);
-                if (sortVal === 'za') return b.name.localeCompare(a.name);
-                return 0;
-            });
-
-            // Atualiza Contador
-            counter.innerText = `Mostrando ${filteredStores.length} de ${initialStores.filter(s => s.offers.length > 0).length} lojas`;
-
-            // Renderiza HTML
-            if (filteredStores.length === 0) {
-                storeList.innerHTML = `<div class="empty-state">Nenhuma loja encontrada com esses filtros.</div>`;
-            } else {
-                storeList.innerHTML = filteredStores.map(store => `
-                    <div class="card">
-                        <div class="card-title">${store.name}</div>
-                        <div class="offer-group">
-                            ${store.offers
-                                .filter(o => filterVal === 'all' || o.type === filterVal)
-                                .map(offer => `
-                                <div class="offer">
-                                    <span class="offer-type">${offer.type}</span>
-                                    <span class="offer-reward">${offer.reward}</span>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                `).join('');
-            }
+        const hasEmptySubcat = relevantStores.some(s => !s.subcat);
+        if (hasEmptySubcat && selectedCat) {
+          const optNone = document.createElement('option');
+          optNone.value = "__NONE__";
+          optNone.textContent = "(Sem Subcategoria)";
+          subcatSelect.appendChild(optNone);
         }
 
-        // Listeners para atualizar a lista em tempo real ao digitar ou mudar os filtros
-        searchInput.addEventListener('input', render);
-        sortSelect.addEventListener('change', render);
-        filterSelect.addEventListener('change', render);
+        if (subcategories.includes(currentSubcat) || currentSubcat === "__NONE__") {
+          subcatSelect.value = currentSubcat;
+        } else {
+          subcatSelect.value = "";
+        }
+      } else {
+        subcatSelect.disabled = true;
+        subcatSelect.value = "";
+      }
+    }
 
-        // Render inicial para carregar as lojas
-        render();
-    </script>
+    function renderCards() {
+      const search = searchInput.value.toLowerCase().trim();
+      const selectedCat = catSelect.value;
+      const selectedSubcat = subcatSelect.value;
+      const sortOrder = sortSelect.value;
+
+      let filtered = storesData.filter(item => {
+        if (selectedCat && item.cat !== selectedCat) return false;
+
+        if (selectedSubcat === "__NONE__") {
+          if (item.subcat !== "") return false;
+        } else if (selectedSubcat && item.subcat !== selectedSubcat) {
+          return false;
+        }
+
+        if (search) {
+          const inName = item.nome.toLowerCase().includes(search);
+          const inCat = item.cat.toLowerCase().includes(search);
+          const inSubcat = item.subcat.toLowerCase().includes(search);
+          const inBenefits = Object.entries(item.beneficios).some(
+            ([prog, val]) => prog.toLowerCase().includes(search) || val.toLowerCase().includes(search)
+          );
+          return inName || inCat || inSubcat || inBenefits;
+        }
+
+        return true;
+      });
+
+      filtered.sort((a, b) => {
+        if (sortOrder === 'az') return a.nome.localeCompare(b.nome, 'pt-BR');
+        if (sortOrder === 'za') return b.nome.localeCompare(a.nome, 'pt-BR');
+        return 0;
+      });
+
+      storeCounter.textContent = `Exibindo ${filtered.length} de ${storesData.length} lojas`;
+
+      if (filtered.length === 0) {
+        cardsContainer.innerHTML = `<div class="card" style="text-align:center; padding: 24px; color: #888;">Nenhuma loja encontrada.</div>`;
+        return;
+      }
+
+      cardsContainer.innerHTML = filtered.map(item => {
+        const benefitsEntries = Object.entries(item.beneficios);
+        const benefitsHtml = benefitsEntries.length > 0 
+          ? benefitsEntries.map(([prog, val]) => `
+              <div class="benefit-item">
+                <span class="benefit-program">${prog}</span>
+                <span class="benefit-value">${val}</span>
+              </div>
+            `).join('')
+          : `<div style="font-size: 13px; color: #999; font-style: italic;">Nenhum benefício cadastrado</div>`;
+
+        return `
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">${item.nome}</div>
+              <div class="tags">
+                <span class="tag tag-cat">${item.cat}</span>
+                ${item.subcat ? `<span class="tag tag-subcat">${item.subcat}</span>` : ''}
+              </div>
+            </div>
+            <div>${benefitsHtml}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    searchInput.addEventListener('input', renderCards);
+    catSelect.addEventListener('change', () => {
+      updateSubcategoryOptions();
+      renderCards();
+    });
+    subcatSelect.addEventListener('change', renderCards);
+    sortSelect.addEventListener('change', renderCards);
+
+    initCategories();
+    renderCards();
+  </script>
 </body>
 </html>
