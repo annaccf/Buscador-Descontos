@@ -1,435 +1,296 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Buscador de Benefícios</title>
-    <!-- Leitor do arquivo Excel em tempo real -->
-    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Buscador de Benefícios</title>
+  <style>
+    :root {
+      --bg-color: #fce7f3;
+      --card-bg: #ffffff;
+      --primary: #9d174d;
+      --primary-light: #fbcfe8;
+      --accent: #be185d;
+      --text-main: #831843;
+      --text-muted: #9f1239;
+      --border: #f472b6;
+    }
 
-        body {
-            background-color: #fdebee;
-            color: #800b38;
-            padding: 16px;
-            max-width: 500px;
-            margin: 0 auto;
-        }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
 
-        h1 {
-            text-align: center;
-            font-size: 24px;
-            font-weight: 800;
-            margin: 16px 0 20px 0;
-            color: #800b38;
-        }
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      padding: 20px 15px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
 
-        .controls {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-bottom: 20px;
-        }
+    h1 {
+      text-align: center;
+      color: var(--primary);
+      margin-bottom: 20px;
+      font-size: 1.8rem;
+    }
 
-        input, select {
-            width: 100%;
-            padding: 14px 16px;
-            border-radius: 12px;
-            border: 1px solid #f2bdcd;
-            background-color: #ffffff;
-            color: #800b38;
-            font-size: 15px;
-            outline: none;
-            box-shadow: 0 2px 6px rgba(128, 11, 56, 0.04);
-            appearance: none;
-            -webkit-appearance: none;
-        }
+    .filters-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
 
-        input::placeholder {
-            color: #d1829b;
-        }
+    input, select {
+      width: 100%;
+      padding: 14px 16px;
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      background-color: #ffffff;
+      color: var(--primary);
+      font-size: 1rem;
+      outline: none;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+    }
 
-        .select-wrapper {
-            position: relative;
-        }
+    input::placeholder {
+      color: #f472b6;
+    }
 
-        .select-wrapper::after {
-            content: '∨';
-            position: absolute;
-            right: 16px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #800b38;
-            pointer-events: none;
-            font-size: 12px;
-            font-weight: bold;
-        }
+    input:focus, select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(190, 24, 93, 0.2);
+    }
 
-        .counter {
-            text-align: center;
-            font-weight: 700;
-            font-size: 16px;
-            color: #800b38;
-            margin: 8px 0 20px 0;
-        }
+    .counter {
+      text-align: center;
+      font-weight: bold;
+      color: var(--primary);
+      margin: 15px 0;
+      font-size: 1rem;
+    }
 
-        .divider {
-            height: 1px;
-            background-color: #f2bdcd;
-            margin-bottom: 20px;
-        }
+    .cards-list {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
 
-        .card {
-            background-color: #ffffff;
-            border-radius: 16px;
-            padding: 18px;
-            margin-bottom: 16px;
-            box-shadow: 0 4px 12px rgba(128, 11, 56, 0.05);
-            border: 1px solid #fae1e8;
-        }
+    .card {
+      background: var(--card-bg);
+      border-radius: 18px;
+      padding: 18px;
+      box-shadow: 0 4px 12px rgba(157, 23, 77, 0.08);
+      border: 1px solid #fbcfe8;
+    }
 
-        .store-name {
-            font-size: 20px;
-            font-weight: 800;
-            color: #800b38;
-            margin-bottom: 8px;
-        }
+    .card-title {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: var(--primary);
+      margin-bottom: 6px;
+    }
 
-        .badge-container {
-            display: flex;
-            gap: 6px;
-            flex-wrap: wrap;
-        }
+    .badges {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 15px;
+    }
 
-        .badge {
-            background-color: #f7a8c4;
-            color: #ffffff;
-            font-size: 11px;
-            font-weight: 800;
-            padding: 4px 10px;
-            border-radius: 6px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
+    .badge {
+      background-color: #fce7f3;
+      color: var(--accent);
+      font-size: 0.75rem;
+      font-weight: bold;
+      padding: 4px 10px;
+      border-radius: 8px;
+      text-transform: uppercase;
+    }
 
-        .badge-sub {
-            background-color: #e282a5;
-        }
+    .benefits-list {
+      border-top: 1px dashed var(--primary-light);
+      padding-top: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
 
-        .card-divider {
-            border: none;
-            border-top: 1px dashed #f2bdcd;
-            margin: 12px 0;
-        }
+    .benefit-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #fff5f8;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 0.95rem;
+    }
 
-        .benefit-item {
-            background-color: #fdf2f5;
-            border-radius: 10px;
-            padding: 12px 14px;
-            margin-bottom: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+    .program-name {
+      font-weight: 700;
+      color: var(--primary);
+    }
 
-        .benefit-item:last-child {
-            margin-bottom: 0;
-        }
-
-        .program-name {
-            font-weight: 700;
-            font-size: 14px;
-            color: #800b38;
-        }
-
-        .benefit-detail {
-            font-weight: 700;
-            font-size: 14px;
-            color: #d12e66;
-            text-align: right;
-        }
-
-        .file-upload-box {
-            background: #fff;
-            border: 2px dashed #f2bdcd;
-            border-radius: 12px;
-            padding: 15px;
-            text-align: center;
-            margin-bottom: 15px;
-            font-size: 14px;
-        }
-
-        .file-upload-box input {
-            border: none;
-            padding: 5px;
-            box-shadow: none;
-        }
-
-        .hidden {
-            display: none !important;
-        }
-    </style>
+    .benefit-value {
+      color: var(--accent);
+      font-weight: 600;
+    }
+  </style>
 </head>
 <body>
 
-    <h1>Buscador de Benefícios</h1>
+  <h1>Buscador de Benefícios</h1>
 
-    <!-- Seleção manual de arquivo (escondida se carregar automaticamente no GitHub) -->
-    <div id="uploadBox" class="file-upload-box">
-        <p style="margin-bottom: 8px; font-weight: bold; color: #800b38;">Selecione o arquivo DESCONTOS_2.xlsx</p>
-        <input type="file" id="excelFile" accept=".xlsx, .xls">
-    </div>
+  <div class="filters-container">
+    <input type="text" id="search" placeholder="Qual loja você está procurando?" oninput="aplicarFiltros()">
+    
+    <select id="categoria" onchange="atualizarSubcategorias(); aplicarFiltros();">
+      <option value="">Todas as Categorias</option>
+    </select>
 
-    <div class="controls">
-        <input type="text" id="searchInput" placeholder="Qual loja você está procurando?">
-        
-        <div class="select-wrapper">
-            <select id="filterCat">
-                <option value="">Todas as Categorias</option>
-            </select>
-        </div>
+    <select id="subcategoria" onchange="aplicarFiltros()">
+      <option value="">Todas as Subcategorias</option>
+    </select>
 
-        <div class="select-wrapper">
-            <select id="filterSubCat">
-                <option value="">Todas as Subcategorias</option>
-            </select>
-        </div>
+    <select id="programa" onchange="aplicarFiltros()">
+      <option value="">Todos os Programas</option>
+    </select>
 
-        <div class="select-wrapper">
-            <select id="filterProg">
-                <option value="">Todos os Programas</option>
-            </select>
-        </div>
+    <select id="ordem" onchange="aplicarFiltros()">
+      <option value="az">Ordem: A - Z</option>
+      <option value="za">Ordem: Z - A</option>
+    </select>
+  </div>
 
-        <div class="select-wrapper">
-            <select id="sortOrder">
-                <option value="az">Ordem: A - Z</option>
-                <option value="za">Ordem: Z - A</option>
-            </select>
-        </div>
-    </div>
+  <div class="counter" id="contador">Mostrando 0 de 0 lojas</div>
 
-    <div class="counter" id="counterText">Carregando dados...</div>
-    <div class="divider"></div>
+  <div class="cards-list" id="listaLojas"></div>
 
-    <div id="storeList"></div>
+  <script>
+    // Cole seus dados estruturados aqui
+    const dadosLojas = [
+      {
+        nome: "3 Corações",
+        categoria: "ALIMENTAÇÃO",
+        subcategoria: "",
+        beneficios: [
+          { programa: "Mastercard", valor: "Pague 1 Leve 2" }
+        ]
+      },
+      {
+        nome: "3qa",
+        categoria: "TECNOLOGIA",
+        subcategoria: "",
+        beneficios: [
+          { programa: "Livelo", valor: "2 pts por R$1" },
+          { programa: "Inter Site", valor: "6% de cashback" }
+        ]
+      }
+    ];
 
-    <script>
-        let storesData = [];
-        let allCategories = new Set();
-        let allSubCategories = new Set();
-        let allPrograms = new Set();
+    function carregarOpcoesFiltros() {
+      const categorias = new Set();
+      const programas = new Set();
 
-        // Normalização de texto para busca sem acentos
-        function norm(str) {
-            if (!str) return '';
-            return str.toString().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
+      dadosLojas.forEach(loja => {
+        if (loja.categoria) categorias.add(loja.categoria);
+        loja.beneficios.forEach(b => programas.add(b.programa));
+      });
+
+      const selectCat = document.getElementById("categoria");
+      Array.from(categorias).sort().forEach(cat => {
+        selectCat.innerHTML += `<option value="${cat}">${cat}</option>`;
+      });
+
+      const selectProg = document.getElementById("programa");
+      Array.from(programas).sort().forEach(prog => {
+        selectProg.innerHTML += `<option value="${prog}">${prog}</option>`;
+      });
+
+      atualizarSubcategorias();
+    }
+
+    function atualizarSubcategorias() {
+      const catSelecionada = document.getElementById("categoria").value;
+      const selectSub = document.getElementById("subcategoria");
+      selectSub.innerHTML = '<option value="">Todas as Subcategorias</option>';
+
+      const subcategorias = new Set();
+      dadosLojas.forEach(loja => {
+        if (!catSelecionada || loja.categoria === catSelecionada) {
+          if (loja.subcategoria) subcategorias.add(loja.subcategoria);
+        }
+      });
+
+      Array.from(subcategorias).sort().forEach(sub => {
+        selectSub.innerHTML += `<option value="${sub}">${sub}</option>`;
+      });
+    }
+
+    function aplicarFiltros() {
+      const busca = document.getElementById("search").value.toLowerCase();
+      const categoria = document.getElementById("categoria").value;
+      const subcategoria = document.getElementById("subcategoria").value;
+      const programa = document.getElementById("programa").value;
+      const ordem = document.getElementById("ordem").value;
+
+      let filtrados = dadosLojas.filter(loja => {
+        const bateNome = loja.nome.toLowerCase().includes(busca);
+        const bateCat = !categoria || loja.categoria === categoria;
+        const bateSub = !subcategoria || loja.subcategoria === subcategoria;
+        const bateProg = !programa || loja.beneficios.some(b => b.programa === programa);
+
+        return bateNome && bateCat && bateSub && bateProg;
+      });
+
+      filtrados.sort((a, b) => {
+        return ordem === "az" 
+          ? a.nome.localeCompare(b.nome, 'pt-BR') 
+          : b.nome.localeCompare(a.nome, 'pt-BR');
+      });
+
+      renderizar(filtrados);
+    }
+
+    function renderizar(lojas) {
+      const container = document.getElementById("listaLojas");
+      const contador = document.getElementById("contador");
+      container.innerHTML = "";
+
+      contador.innerText = `Mostrando ${lojas.length} de ${dadosLojas.length} lojas`;
+
+      lojas.forEach(loja => {
+        const card = document.createElement("div");
+        card.className = "card";
+
+        let badgesHTML = `<span class="badge">${loja.categoria}</span>`;
+        if (loja.subcategoria) {
+          badgesHTML += `<span class="badge">${loja.subcategoria}</span>`;
         }
 
-        // Tenta carregar DESCONTOS_2.xlsx diretamente do GitHub Pages
-        window.addEventListener('DOMContentLoaded', () => {
-            fetch('DESCONTOS_2.xlsx')
-                .then(res => {
-                    if (!res.ok) throw new Error('Arquivo não localizado no servidor');
-                    return res.arrayBuffer();
-                })
-                .then(buffer => processExcelBuffer(buffer))
-                .catch(() => {
-                    document.getElementById('uploadBox').classList.remove('hidden');
-                    document.getElementById('counterText').innerText = 'Por favor, selecione a planilha acima.';
-                });
-        });
+        let beneficiosHTML = loja.beneficios.map(b => `
+          <div class="benefit-item">
+            <span class="program-name">${b.programa}</span>
+            <span class="benefit-value">${b.valor}</span>
+          </div>
+        `).join("");
 
-        document.getElementById('excelFile').addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = (evt) => processExcelBuffer(evt.target.result);
-            reader.readAsArrayBuffer(file);
-        });
+        card.innerHTML = `
+          <div class="card-title">${loja.nome}</div>
+          <div class="badges">${badgesHTML}</div>
+          <div class="benefits-list">${beneficiosHTML}</div>
+        `;
 
-        function processExcelBuffer(buffer) {
-            const workbook = XLSX.read(buffer, { type: 'array' });
-            const firstSheetName = workbook.SheetNames[0];
-            const worksheet = workbook.Sheets[firstSheetName];
-            const rawData = XLSX.utils.sheet_to_json(worksheet, { defval: '' });
+        container.appendChild(card);
+      });
+    }
 
-            parseStores(rawData);
-            document.getElementById('uploadBox').classList.add('hidden');
-        }
-
-        function parseStores(rawData) {
-            if (!rawData || rawData.length === 0) return;
-
-            const keys = Object.keys(rawData[0]);
-            let keyLoja = keys.find(k => /loja|nome/i.test(k)) || keys[0];
-            let keyCat = keys.find(k => /^categoria$/i.test(k) \vert{}\vert{} /^cat$/i.test(k)) || keys.find(k => /categoria/i.test(k));
-            let keySubCat = keys.find(k => /sub/i.test(k));
-            let keyProg = keys.find(k => /programa|cartao|banco/i.test(k));
-            let keyBen = keys.find(k => /beneficio|desconto|cashback/i.test(k));
-
-            const storeMap = new Map();
-            allCategories.clear();
-            allSubCategories.clear();
-            allPrograms.clear();
-
-            rawData.forEach(row => {
-                const lojaName = String(row[keyLoja] || '').trim();
-                if (!lojaName) return;
-
-                const cat = keyCat ? String(row[keyCat] || '').trim() : '';
-                const subCat = keySubCat ? String(row[keySubCat] || '').trim() : '';
-
-                if (cat) allCategories.add(cat);
-                if (subCat) allSubCategories.add(subCat);
-
-                if (!storeMap.has(lojaName)) {
-                    storeMap.set(lojaName, {
-                        nome: lojaName,
-                        categoria: cat,
-                        subcategoria: subCat,
-                        beneficios: []
-                    });
-                }
-
-                const storeObj = storeMap.get(lojaName);
-
-                if (keyProg && keyBen) {
-                    const prog = String(row[keyProg] || '').trim();
-                    const ben = String(row[keyBen] || '').trim();
-                    if (prog && ben) {
-                        allPrograms.add(prog);
-                        storeObj.beneficios.push({ programa: prog, detalhe: ben });
-                    }
-                } else {
-                    keys.forEach(k => {
-                        if (k !== keyLoja && k !== keyCat && k !== keySubCat) {
-                            const val = String(row[k] || '').trim();
-                            if (val && val !== '-' && val !== 'N/A') {
-                                allPrograms.add(k.trim());
-                                storeObj.beneficios.push({ programa: k.trim(), detalhe: val });
-                            }
-                        }
-                    });
-                }
-            });
-
-            storesData = Array.from(storeMap.values());
-            populateSelects();
-            render();
-        }
-
-        function populateSelects() {
-            const catSelect = document.getElementById('filterCat');
-            const progSelect = document.getElementById('filterProg');
-
-            catSelect.innerHTML = '<option value="">Todas as Categorias</option>';
-            Array.from(allCategories).sort().forEach(c => {
-                catSelect.innerHTML += `<option value="${c}">${c}</option>`;
-            });
-
-            populateSubCategories();
-
-            progSelect.innerHTML = '<option value="">Todos os Programas</option>';
-            Array.from(allPrograms).sort().forEach(p => {
-                progSelect.innerHTML += `<option value="${p}">${p}</option>`;
-            });
-        }
-
-        function populateSubCategories() {
-            const selectedCat = document.getElementById('filterCat').value;
-            const subCatSelect = document.getElementById('filterSubCat');
-            subCatSelect.innerHTML = '<option value="">Todas as Subcategorias</option>';
-
-            const subs = new Set();
-            storesData.forEach(s => {
-                if (!selectedCat || s.categoria === selectedCat) {
-                    if (s.subcategoria) subs.add(s.subcategoria);
-                }
-            });
-
-            Array.from(subs).sort().forEach(sc => {
-                subCatSelect.innerHTML += `<option value="${sc}">${sc}</option>`;
-            });
-        }
-
-        function render() {
-            const searchVal = norm(document.getElementById('searchInput').value);
-            const catVal = document.getElementById('filterCat').value;
-            const subCatVal = document.getElementById('filterSubCat').value;
-            const progVal = document.getElementById('filterProg').value;
-            const sortVal = document.getElementById('sortOrder').value;
-
-            let filtered = storesData.filter(store => {
-                if (searchVal && !norm(store.nome).includes(searchVal)) return false;
-                if (catVal && store.categoria !== catVal) return false;
-                if (subCatVal && store.subcategoria !== subCatVal) return false;
-                if (progVal) {
-                    const hasProg = store.beneficios.some(b => b.programa === progVal);
-                    if (!hasProg) return false;
-                }
-                return true;
-            });
-
-            filtered.sort((a, b) => {
-                if (sortVal === 'az') return a.nome.localeCompare(b.nome, 'pt-BR');
-                return b.nome.localeCompare(a.nome, 'pt-BR');
-            });
-
-            document.getElementById('counterText').innerText = `Mostrando ${filtered.length} de ${storesData.length} lojas`;
-
-            const container = document.getElementById('storeList');
-            if (filtered.length === 0) {
-                container.innerHTML = '<p style="text-align: center; color: #d1829b; padding: 20px;">Nenhuma loja encontrada.</p>';
-                return;
-            }
-
-            container.innerHTML = filtered.map(store => {
-                let showBen = store.beneficios;
-                if (progVal) {
-                    showBen = store.beneficios.filter(b => b.programa === progVal);
-                }
-
-                const catBadge = store.categoria ? `<span class="badge">${store.categoria}</span>` : '';
-                const subCatBadge = store.subcategoria ? `<span class="badge badge-sub">${store.subcategoria}</span>` : '';
-
-                const benefitsHtml = showBen.map(b => `
-                    <div class="benefit-item">
-                        <span class="program-name">${b.programa}</span>
-                        <span class="benefit-detail">${b.detalhe}</span>
-                    </div>
-                `).join('');
-
-                return `
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="store-name">${store.nome}</div>
-                            <div class="badge-container">
-                                ${catBadge}
-                                ${subCatBadge}
-                            </div>
-                        </div>
-                        <hr class="card-divider">
-                        ${benefitsHtml}
-                    </div>
-                `;
-            }).join('');
-        }
-
-        document.getElementById('searchInput').addEventListener('input', render);
-        document.getElementById('filterCat').addEventListener('change', () => {
-            populateSubCategories();
-            render();
-        });
-        document.getElementById('filterSubCat').addEventListener('change', render);
-        document.getElementById('filterProg').addEventListener('change', render);
-        document.getElementById('sortOrder').addEventListener('change', render);
-    </script>
+    carregarOpcoesFiltros();
+    aplicarFiltros();
+  </script>
 </body>
 </html>
