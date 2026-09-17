@@ -5,335 +5,394 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Buscador de Benefícios</title>
     <style>
-        :root {
-            --bg-color: #fdeef3;
-            --card-bg: #ffffff;
-            --primary: #9b1b52;
-            --primary-soft: #fbe4ed;
-            --text-dark: #4a0e2e;
-            --text-muted: #8c5b75;
-            --border: #f3c2d4;
-            --shadow: rgba(155, 27, 82, 0.08);
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        }
-
+        * { box-sizing: border-box; }
         body {
-            background-color: var(--bg-color);
-            color: var(--text-dark);
-            padding: 20px 12px;
-            display: flex;
-            justify-content: center;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #fff0f5;
+            color: #4a0e2a;
+            margin: 0;
+            padding: 16px;
         }
-
-        .container {
-            width: 100%;
-            max-width: 480px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        h1 {
+        .header-title {
             text-align: center;
-            color: var(--primary);
-            font-size: 1.6rem;
+            color: #880e4f;
+            font-size: 22px;
             font-weight: 800;
-            margin-bottom: 8px;
+            margin: 8px 0 16px 0;
         }
-
-        .filter-box {
+        .header {
+            position: sticky;
+            top: 0;
+            background-color: #fff0f5;
+            padding-bottom: 8px;
+            z-index: 10;
+        }
+        .controls {
             display: flex;
             flex-direction: column;
             gap: 10px;
         }
-
-        input, select {
+        .controls input, .controls select {
             width: 100%;
             padding: 12px 16px;
-            border-radius: 12px;
-            border: 1px solid var(--border);
-            background-color: #ffffff;
-            color: var(--text-dark);
-            font-size: 0.95rem;
+            border: 1px solid #f48fb1;
+            border-radius: 14px;
+            font-size: 14px;
             outline: none;
-            box-shadow: 0 2px 6px var(--shadow);
+            background-color: #ffffff;
+            color: #880e4f;
+            box-shadow: 0 2px 5px rgba(233, 30, 99, 0.05);
             appearance: none;
-        }
-
-        select {
-            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%239b1b52'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%22%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23880e4f%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
             background-repeat: no-repeat;
-            background-position: right 12px center;
-            background-size: 20px;
+            background-position: right 14px top 50%;
+            background-size: 10px auto;
         }
-
-        input::placeholder {
-            color: #d19bb6;
+        .controls input {
+            background-image: none;
         }
-
+        .controls input:focus, .controls select:focus {
+            border-color: #d81b60;
+            box-shadow: 0 2px 8px rgba(233, 30, 99, 0.2);
+        }
+        .controls input::placeholder {
+            color: #f06292;
+        }
         .counter {
             text-align: center;
+            font-size: 14px;
+            color: #a01b4c;
             font-weight: 700;
-            color: var(--primary);
-            font-size: 0.9rem;
-            margin: 6px 0;
+            margin: 14px 0 10px 0;
         }
-
-        hr {
-            border: none;
-            border-top: 1px solid var(--border);
-            margin-bottom: 4px;
+        .divider {
+            border: 0;
+            border-top: 1px solid #f8bbd0;
+            margin-bottom: 16px;
         }
-
-        .cards-list {
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-        }
-
         .card {
-            background: var(--card-bg);
+            background-color: #ffffff;
             border-radius: 16px;
             padding: 16px;
-            box-shadow: 0 4px 12px var(--shadow);
-            border: 1px solid #f9e2ec;
+            margin-bottom: 14px;
+            box-shadow: 0 4px 12px rgba(233, 30, 99, 0.06);
+            border: 1px solid #fce4ec;
         }
-
         .card-header {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 6px;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
         }
-
-        .store-name {
-            font-size: 1.25rem;
+        .card-title {
             font-weight: 800;
-            color: var(--text-dark);
+            font-size: 18px;
+            color: #330015;
+            margin-bottom: 6px;
         }
-
-        .badge-group {
-            display: flex;
-            gap: 6px;
-            flex-wrap: wrap;
-        }
-
-        .badge {
-            background-color: #f38ba8;
-            color: #ffffff;
-            font-size: 0.7rem;
-            font-weight: 800;
-            padding: 3px 8px;
-            border-radius: 6px;
+        .category-badge {
+            display: inline-block;
+            background-color: #f8bbd0;
+            color: #880e4f;
+            font-weight: 700;
+            font-size: 11px;
+            padding: 4px 10px;
+            border-radius: 12px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
-
-        .badge.sub {
-            background-color: #eba0b5;
+        .card-divider {
+            border-top: 1px dashed #f8bbd0;
+            margin: 10px 0 12px 0;
         }
-
-        .benefits-list {
-            border-top: 1px dashed var(--border);
-            padding-top: 10px;
+        .offer-group {
             display: flex;
             flex-direction: column;
             gap: 8px;
         }
-
-        .benefit-item {
-            background-color: var(--primary-soft);
-            padding: 10px 12px;
+        .offer {
+            background-color: #fdf0f5;
             border-radius: 10px;
+            padding: 10px 14px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 0.88rem;
+            border: 1px solid #fce4ec;
         }
-
-        .program-name {
+        .offer-type {
             font-weight: 700;
-            color: var(--primary);
+            font-size: 14px;
+            color: #880e4f;
         }
-
-        .benefit-value {
-            font-weight: 600;
-            color: var(--primary);
+        .offer-reward {
+            font-weight: 700;
+            font-size: 13px;
+            color: #d81b60;
             text-align: right;
+            max-width: 65%;
+            word-wrap: break-word;
         }
-
-        .empty-message {
+        .empty-state {
             text-align: center;
-            color: var(--text-muted);
-            padding: 20px;
-            font-size: 0.95rem;
+            color: #d81b60;
+            font-size: 15px;
+            margin-top: 40px;
+            font-weight: 600;
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>Buscador de Benefícios</h1>
+    <h1 class="header-title">Buscador de Benefícios</h1>
 
-    <div class="filter-box">
-        <input type="text" id="searchInput" placeholder="Qual loja você está procurando?" oninput="filterStores()">
-        
-        <select id="categorySelect" onchange="filterStores()">
-            <option value="">Todas as Categorias</option>
-        </select>
+    <div class="header">
+        <div class="controls">
+            <input type="text" id="searchInput" placeholder="Qual loja você está procurando?">
+            
+            <select id="categorySelect">
+                <option value="all">Todas as Categorias</option>
+                <option value="Alimentação e Bebidas">Alimentação e Bebidas</option>
+                <option value="Moda e Acessórios">Moda e Acessórios</option>
+                <option value="Beleza e Saúde">Beleza e Saúde</option>
+                <option value="Tecnologia e Eletrônicos">Tecnologia e Eletrônicos</option>
+                <option value="Casa e Decoração">Casa e Decoração</option>
+                <option value="Viagem e Lazer">Viagem e Lazer</option>
+                <option value="Games e Geek">Games e Geek</option>
+                <option value="Supermercados e Variedades">Supermercados e Variedades</option>
+            </select>
 
-        <select id="subcategorySelect" onchange="filterStores()">
-            <option value="">Todas as Subcategorias</option>
-        </select>
+            <select id="subcategorySelect">
+                <option value="all">Todas as Subcategorias</option>
+            </select>
 
-        <select id="programSelect" onchange="filterStores()">
-            <option value="">Todos os Programas</option>
-        </select>
+            <select id="programSelect">
+                <option value="all">Todos os Programas</option>
+            </select>
 
-        <select id="orderSelect" onchange="filterStores()">
-            <option value="AZ">Ordem: A - Z</option>
-            <option value="ZA">Ordem: Z - A</option>
-        </select>
+            <select id="sortSelect">
+                <option value="az">Ordem: A - Z</option>
+                <option value="za">Ordem: Z - A</option>
+            </select>
+        </div>
+
+        <div class="counter" id="counter">Mostrando 0 de 0 lojas</div>
+        <hr class="divider">
     </div>
 
-    <div class="counter" id="counter">Mostrando 0 de 0 lojas</div>
-    <hr>
+    <div id="storeList"></div>
 
-    <div class="cards-list" id="cardsContainer"></div>
-</div>
+    <script>
+        const subcategoryMap = {
+            "Alimentação e Bebidas": ["Restaurantes e Fast-Food", "Cafés e Chocolates", "Supermercados e Bebidas", "Delivery e Outros"],
+            "Moda e Acessórios": ["Vestuário", "Calçados", "Joias e Relógios", "Esportes"],
+            "Beleza e Saúde": ["Cosméticos e Perfumes", "Farmácias e Drogarias", "Suplementos e Estética"],
+            "Tecnologia e Eletrônicos": ["Informática e Celulares", "Eletrodomésticos", "Áudio, Foto e Acessórios"],
+            "Casa e Decoração": ["Móveis e Decoração", "Utilidades Domésticas", "Ferramentas e Construção"],
+            "Viagem e Lazer": ["Passagens e Pacotes", "Hospedagem", "Aluguel de Carros", "Entretenimento"],
+            "Games e Geek": ["Jogos Digitais", "Consoles e Assinaturas", "Giftcards de Jogos"],
+            "Supermercados e Variedades": ["Grandes Lojas e E-Commerce", "Pet Shop", "Livros e Cursos", "Presentes e Outros"]
+        };
 
-<script>
-    // Cole ou atualize a lista completa de lojas do seu Excel nesta estrutura JSON:
-    const storesData = [
-        {
-            loja: "3 Corações",
-            categoria: "ALIMENTAÇÃO",
-            subcategoria: "",
-            beneficios: [
-                { programa: "Mastercard", valor: "Pague 1 Leve 2" }
-            ]
-        },
-        {
-            loja: "3qa",
-            categoria: "TECNOLOGIA",
-            subcategoria: "",
-            beneficios: [
-                { programa: "Livelo", valor: "2 pts por R$1" },
-                { programa: "Inter Site", valor: "6% de cashback" }
-            ]
-        }
-    ];
+        const programs = ["Livelo", "Inter Cashback", "Inter Site", "Inter Giftcard", "Vale", "Alelo", "Mastercard", "Itaú", "Recarga Pay", "BB"];
 
-    function initFilters() {
-        const categories = new Set();
-        const subcategories = new Set();
-        const programs = new Set();
+        const stores = [
+            {"name": "3 Corações", "category": "Alimentação e Bebidas", "subcategory": "Cafés e Chocolates", "offers": [{"type": "Mastercard", "reward": "Pague 1 Leve 2"}]},
+            {"name": "3qa", "category": "Tecnologia e Eletrônicos", "subcategory": "Informática e Celulares", "offers": [{"type": "Livelo", "reward": "2 pts por R$1"}, {"type": "Inter Site", "reward": "6% de cashback"}, {"type": "Alelo", "reward": "10%"}, {"type": "Mastercard", "reward": "25%"}]},
+            {"name": "99 Food", "category": "Alimentação e Bebidas", "subcategory": "Delivery e Outros", "offers": [{"type": "Inter Giftcard", "reward": "2% de cashback no giftcard"}]},
+            {"name": "99 Mobilidade", "category": "Viagem e Lazer", "subcategory": "Entretenimento", "offers": [{"type": "Inter Giftcard", "reward": "2% de cashback no giftcard"}]},
+            {"name": "A7", "category": "Tecnologia e Eletrônicos", "subcategory": "Informática e Celulares", "offers": [{"type": "Inter Site", "reward": "3% de cashback"}]},
+            {"name": "Abraccio", "category": "Alimentação e Bebidas", "subcategory": "Restaurantes e Fast-Food", "offers": [{"type": "Inter Giftcard", "reward": "2% de cashback no giftcard"}]},
+            {"name": "Acer", "category": "Tecnologia e Eletrônicos", "subcategory": "Informática e Celulares", "offers": [{"type": "Livelo", "reward": "4 pts por R$1"}, {"type": "Inter Cashback", "reward": "8% de cashback"}, {"type": "Inter Site", "reward": "1% de cashback"}, {"type": "BB", "reward": "0.5%"}]},
+            {"name": "ADCOS", "category": "Beleza e Saúde", "subcategory": "Cosméticos e Perfumes", "offers": [{"type": "Livelo", "reward": "1 pts por R$1"}, {"type": "Inter Site", "reward": "10% de cashback"}, {"type": "BB", "reward": "7%"}]},
+            {"name": "Adidas", "category": "Moda e Acessórios", "subcategory": "Esportes", "offers": [{"type": "Inter Site", "reward": "8% de cashback"}, {"type": "BB", "reward": "3.5%"}]},
+            {"name": "Airbnb", "category": "Viagem e Lazer", "subcategory": "Hospedagem", "offers": []},
+            {"name": "Alibaba", "category": "Supermercados e Variedades", "subcategory": "Grandes Lojas e E-Commerce", "offers": [{"type": "Inter Site", "reward": "3.5% de cashback"}]},
+            {"name": "Aliexpress", "category": "Supermercados e Variedades", "subcategory": "Grandes Lojas e E-Commerce", "offers": [{"type": "Livelo", "reward": "3 pts por R$1"}, {"type": "Inter Site", "reward": "7% de cashback"}, {"type": "BB", "reward": "2%"}]},
+            {"name": "Allu.", "category": "Tecnologia e Eletrônicos", "subcategory": "Informática e Celulares", "offers": [{"type": "BB", "reward": "15%"}]},
+            {"name": "Alura", "category": "Supermercados e Variedades", "subcategory": "Livros e Cursos", "offers": [{"type": "Inter Site", "reward": "5.5% de cashback"}, {"type": "BB", "reward": "4%"}]},
+            {"name": "Amazon.com.br", "category": "Supermercados e Variedades", "subcategory": "Grandes Lojas e E-Commerce", "offers": [{"type": "BB", "reward": "Benefício Disponível"}]},
+            {"name": "Amobeleza", "category": "Beleza e Saúde", "subcategory": "Cosméticos e Perfumes", "offers": [{"type": "Inter Site", "reward": "6% de cashback"}, {"type": "Alelo", "reward": "10%"}, {"type": "Mastercard", "reward": "10%"}, {"type": "BB", "reward": "5%"}]},
+            {"name": "Anacapri", "category": "Moda e Acessórios", "subcategory": "Calçados", "offers": [{"type": "Inter Giftcard", "reward": "5% de cashback no giftcard"}]},
+            {"name": "Angeloni", "category": "Alimentação e Bebidas", "subcategory": "Supermercados e Bebidas", "offers": [{"type": "Inter Cashback", "reward": "5% de cashback"}]},
+            {"name": "Animale", "category": "Moda e Acessórios", "subcategory": "Vestuário", "offers": [{"type": "Inter Site", "reward": "4% de cashback"}, {"type": "Alelo", "reward": "15%"}, {"type": "BB", "reward": "3.5%"}]},
+            {"name": "Anna Pegova", "category": "Beleza e Saúde", "subcategory": "Cosméticos e Perfumes", "offers": [{"type": "Alelo", "reward": "2.56% de crédito"}]}, "Ao Gosto", "category": "Alimentação e Bebidas", "subcategory": "Restaurantes e Fast-Food", "offers": [{"type": "Inter Giftcard", "reward": "4% de cashback no giftcard"}]},
+            {"name": "App Store", "category": "Games e Geek", "subcategory": "Consoles e Assinaturas", "offers": [{"type": "Inter Giftcard", "reward": "4% de cashback no giftcard"}]},
+            {"name": "AppGas", "category": "Casa e Decoração", "subcategory": "Utilidades Domésticas", "offers": [{"type": "Inter Giftcard", "reward": "1% de cashback no giftcard"}]},
+            {"name": "Approve", "category": "Moda e Acessórios", "subcategory": "Vestuário", "offers": [{"type": "Inter Site", "reward": "3% de cashback"}, {"type": "Alelo", "reward": "10%"}, {"type": "Mastercard", "reward": "30%"}]},
+            {"name": "Aramis", "category": "Moda e Acessórios", "subcategory": "Vestuário", "offers": [{"type": "Livelo", "reward": "2 pts por R$1"}, {"type": "Inter Site", "reward": "6% de cashback"}, {"type": "Alelo", "reward": "15%"}, {"type": "Mastercard", "reward": "30%"}, {"type": "BB", "reward": "4.5%"}]}, "Arezzo", "category": "Moda e Acessórios", "subcategory": "Calçados", "offers": [{"type": "Inter Giftcard", "reward": "5% de cashback no giftcard"}]},
+            {"name": "Armazém Circular", "category": "Moda e Acessórios", "subcategory": "Vestuário", "offers": [{"type": "Inter Cashback", "reward": "2% de cashback"}]},
+            {"name": "Arno", "category": "Casa e Decoração", "subcategory": "Eletrodomésticos", "offers": [{"type": "Inter Site", "reward": "6% de cashback"}, {"type": "BB", "reward": "4%"}]},
+            {"name": "ArtWalk", "category": "Moda e Acessórios", "subcategory": "Calçados", "offers": [{"type": "BB", "reward": "2%"}]},
+            {"name": "Asics", "category": "Moda e Acessórios", "subcategory": "Esportes", "offers": [{"type": "Livelo", "reward": "1 pts por R$1"}, {"type": "Inter Site", "reward": "5% de cashback"}, {"type": "Mastercard", "reward": "Pague 1 Leve 2"}, {"type": "BB", "reward": "4%"}]},
+            {"name": "Assaí", "category": "Alimentação e Bebidas", "subcategory": "Supermercados e Bebidas", "offers": [{"type": "Inter Giftcard", "reward": "3% de cashback no giftcard"}]},
+            {"name": "Asus", "category": "Tecnologia e Eletrônicos", "subcategory": "Informática e Celulares", "offers": [{"type": "BB", "reward": "0.8%"}]},
+            {"name": "Atacadão Danone", "category": "Alimentação e Bebidas", "subcategory": "Supermercados e Bebidas", "offers": [{"type": "Inter Site", "reward": "7% de cashback"}]},
+            {"name": "Authentic Feet", "category": "Moda e Acessórios", "subcategory": "Calçados", "offers": [{"type": "BB", "reward": "2%"}]},
+            {"name": "Avell", "category": "Tecnologia e Eletrônicos", "subcategory": "Informática e Celulares", "offers": [{"type": "BB", "reward": "0.8%"}]},
+            {"name": "Avon", "category": "Beleza e Saúde", "subcategory": "Cosméticos e Perfumes", "offers": [{"type": "Inter Site", "reward": "10% de cashback"}, {"type": "Alelo", "reward": "20%"}, {"type": "Mastercard", "reward": "50%"}, {"type": "BB", "reward": "16%"}]},
+            {"name": "Avowed", "category": "Games e Geek", "subcategory": "Jogos Digitais", "offers": [{"type": "Inter Giftcard", "reward": "5% de cashback no giftcard"}]},
+            {"name": "Azul", "category": "Viagem e Lazer", "subcategory": "Passagens e Pacotes", "offers": [{"type": "Inter Site", "reward": "1% de cashback"}, {"type": "BB", "reward": "0.5%"}]},
+            {"name": "B2 Online", "category": "Moda e Acessórios", "subcategory": "Calçados", "offers": [{"type": "Inter Cashback", "reward": "5% de cashback"}]},
+            {"name": "Bacio di Latte", "category": "Alimentação e Bebidas", "subcategory": "Cafés e Chocolates", "offers": [{"type": "Inter Giftcard", "reward": "3% de cashback no giftcard"}, {"type": "Mastercard", "reward": "Pague 1 Leve 2"}]},
+            {"name": "Bagaggio", "category": "Moda e Acessórios", "subcategory": "Vestuário", "offers": [{"type": "Livelo", "reward": "1 pts por R$1"}, {"type": "Inter Cashback", "reward": "2% de cashback"}, {"type": "Inter Giftcard", "reward": "2% de cashback no giftcard"}]},
+            {"name": "Baggio Café", "category": "Alimentação e Bebidas", "subcategory": "Cafés e Chocolates", "offers": [{"type": "Inter Site", "reward": "5% de cashback"}, {"type": "Alelo", "reward": "15%"}, {"type": "BB", "reward": "4.5%"}]},
+            {"name": "Battle.Net", "category": "Games e Geek", "subcategory": "Consoles e Assinaturas", "offers": [{"type": "Inter Giftcard", "reward": "3% de cashback no giftcard"}]},
+            {"name": "Beleza na Web", "category": "Beleza e Saúde", "subcategory": "Cosméticos e Perfumes", "offers": [{"type": "Livelo", "reward": "10 pts por R$1"}, {"type": "Inter Site", "reward": "10% de cashback"}, {"type": "Mastercard", "reward": "10%"}, {"type": "BB", "reward": "13%"}]},
+            {"name": "Belmicro", "category": "Tecnologia e Eletrônicos", "subcategory": "Informática e Celulares", "offers": [{"type": "Inter Cashback", "reward": "2% de cashback"}]},
+            {"name": "Bem Estar", "category": "Beleza e Saúde", "subcategory": "Suplementos e Estética", "offers": [{"type": "Inter Giftcard", "reward": "3% de cashback no giftcard"}]},
+            {"name": "Beyoung", "category": "Beleza e Saúde", "subcategory": "Cosméticos e Perfumes", "offers": [{"type": "Livelo", "reward": "3 pts por R$1"}, {"type": "Inter Cashback", "reward": "5% de cashback"}]},
+            {"name": "Biscoitê", "category": "Alimentação e Bebidas", "subcategory": "Cafés e Chocolates", "offers": [{"type": "BB", "reward": "2%"}]},
+            {"name": "Booking.com", "category": "Viagem e Lazer", "subcategory": "Hospedagem", "offers": [{"type": "Livelo", "reward": "4 pts por R$1"}, {"type": "Inter Site", "reward": "8% de cashback"}, {"type": "Alelo", "reward": "20%"}, {"type": "Mastercard", "reward": "4%"}]},
+            {"name": "Brastemp", "category": "Casa e Decoração", "subcategory": "Eletrodomésticos", "offers": [{"type": "Inter Cashback", "reward": "5% de cashback"}, {"type": "Inter Site", "reward": "1.54% de cashback"}]},
+            {"name": "Britânia", "category": "Casa e Decoração", "subcategory": "Eletrodomésticos", "offers": [{"type": "Inter Cashback", "reward": "5% de cashback"}, {"type": "Mastercard", "reward": "10%"}]},
+            {"name": "Buser", "category": "Viagem e Lazer", "subcategory": "Passagens e Pacotes", "offers": [{"type": "Inter Giftcard", "reward": "7% de cashback no giftcard"}, {"type": "BB", "reward": "4%"}]},
+            {"name": "C&A", "category": "Moda e Acessórios", "subcategory": "Vestuário", "offers": [{"type": "Livelo", "reward": "6 pts por R$1"}, {"type": "Inter Site", "reward": "17% de cashback"}, {"type": "Inter Giftcard", "reward": "6% de cashback no giftcard"}, {"type": "Alelo", "reward": "10%"}, {"type": "Mastercard", "reward": "50%"}, {"type": "BB", "reward": "15%"}]},
+            {"name": "Cacau Show", "category": "Alimentação e Bebidas", "subcategory": "Cafés e Chocolates", "offers": [{"type": "Inter Giftcard", "reward": "3% de cashback no giftcard"}]},
+            {"name": "Cadence", "category": "Casa e Decoração", "subcategory": "Eletrodomésticos", "offers": [{"type": "Inter Cashback", "reward": "8% de cashback"}]},
+            {"name": "Calvin Klein", "category": "Moda e Acessórios", "subcategory": "Vestuário", "offers": [{"type": "Inter Cashback", "reward": "2% de cashback"}, {"type": "Inter Site", "reward": "6% de cashback"}, {"type": "BB", "reward": "4.5%"}]},
+            {"name": "Camarada Camarão", "category": "Alimentação e Bebidas", "subcategory": "Restaurantes e Fast-Food", "offers": [{"type": "Inter Giftcard", "reward": "3% de cashback no giftcard"}]},
+            {"name": "Camicado", "category": "Casa e Decoração", "subcategory": "Utilidades Domésticas", "offers": [{"type": "Livelo", "reward": "2 pts por R$1"}, {"type": "Inter Cashback", "reward": "4% de cashback"}, {"type": "Inter Site", "reward": "0.7% de cashback"}, {"type": "Inter Giftcard", "reward": "2% de cashback no giftcard"}, {"type": "Alelo", "reward": "10%"}, {"type": "BB", "reward": "3%"}]},
+            {"name": "Canon", "category": "Tecnologia e Eletrônicos", "subcategory": "Áudio, Foto e Acessórios", "offers": [{"type": "Inter Site", "reward": "1% de cashback"}, {"type": "Mastercard", "reward": "30%"}]},
+            {"name": "Carrefour", "category": "Supermercados e Variedades", "subcategory": "Grandes Lojas e E-Commerce", "offers": [{"type": "Inter Cashback", "reward": "5% de cashback"}, {"type": "Inter Site", "reward": "0.5% de cashback"}, {"type": "Inter Giftcard", "reward": "2% de cashback no giftcard"}, {"type": "BB", "reward": "1.5%"}]},
+            {"name": "Casas Bahia", "category": "Supermercados e Variedades", "subcategory": "Grandes Lojas e E-Commerce", "offers": [{"type": "Livelo", "reward": "1 pts por R$1"}, {"type": "Inter Cashback", "reward": "7% de cashback"}]},
+            {"name": "Centauro", "category": "Moda e Acessórios", "subcategory": "Esportes", "offers": [{"type": "Livelo", "reward": "2 pts por R$1"}, {"type": "Inter Site", "reward": "2% de cashback"}, {"type": "Inter Giftcard", "reward": "10% de cashback no giftcard"}, {"type": "Mastercard", "reward": "15%"}, {"type": "BB", "reward": "2%"}]},
+            {"name": "Chilli Beans", "category": "Moda e Acessórios", "subcategory": "Joias e Relógios", "offers": [{"type": "Inter Site", "reward": "5% de cashback"}, {"type": "Inter Giftcard", "reward": "5% de cashback no giftcard"}]},
+            {"name": "Cinemark", "category": "Viagem e Lazer", "subcategory": "Entretenimento", "offers": [{"type": "Inter Giftcard", "reward": "7% de cashback no giftcard"}]}, {"name": "Claro", "category": "Tecnologia e Eletrônicos", "subcategory": "Informática e Celulares", "offers": [{"type": "Livelo", "reward": "6 pts por R$1"}, {"type": "Inter Site", "reward": "1% de cashback"}]},
+            {"name": "Coco Bambu", "category": "Alimentação e Bebidas", "subcategory": "Restaurantes e Fast-Food", "offers": [{"type": "Inter Giftcard", "reward": "3% de cashback no giftcard"}]},
+            {"name": "Consul", "category": "Casa e Decoração", "subcategory": "Eletrodomésticos", "offers": [{"type": "Inter Cashback", "reward": "5% de cashback"}, {"type": "Inter Site", "reward": "1% de cashback"}, {"type": "Mastercard", "reward": "R$100 OFF"}]},
+            {"name": "CVC", "category": "Viagem e Lazer", "subcategory": "Passagens e Pacotes", "offers": [{"type": "Inter Site", "reward": "1% de cashback"}]},
+            {"name": "Dafiti", "category": "Moda e Acessórios", "subcategory": "Vestuário", "offers": [{"type": "Livelo", "reward": "1 pts por R$1"}, {"type": "Inter Site", "reward": "1% de cashback"}, {"type": "Mastercard", "reward": "80%"}, {"type": "BB", "reward": "0.6%"}]},
+            {"name": "Decathlon", "category": "Moda e Acessórios", "subcategory": "Esportes", "offers": [{"type": "Inter Giftcard", "reward": "3% de cashback no giftcard"}, {"type": "BB", "reward": "1.5%"}]},
+            {"name": "Decolar", "category": "Viagem e Lazer", "subcategory": "Passagens e Pacotes", "offers": [{"type": "Livelo", "reward": "6 pts por R$1"}, {"type": "Inter Site", "reward": "2% de cashback"}, {"type": "Alelo", "reward": "5%"}, {"type": "Mastercard", "reward": "10%"}, {"type": "BB", "reward": "1.5%"}]},
+            {"name": "Dell", "category": "Tecnologia e Eletrônicos", "subcategory": "Informática e Celulares", "offers": [{"type": "Mastercard", "reward": "7%"}]},
+            {"name": "Droga Raia", "category": "Beleza e Saúde", "subcategory": "Farmácias e Drogarias", "offers": [{"type": "Inter Site", "reward": "4% de cashback"}, {"type": "BB", "reward": "2.3%"}]},
+            {"name": "Drogaria São Paulo", "category": "Beleza e Saúde", "subcategory": "Farmácias e Drogarias", "offers": [{"type": "Inter Site", "reward": "4% de cashback"}, {"type": "BB", "reward": "2.8%"}]},
+            {"name": "Drogasil", "category": "Beleza e Saúde", "subcategory": "Farmácias e Drogarias", "offers": [{"type": "Inter Site", "reward": "0.2% de cashback"}, {"type": "Alelo", "reward": "15%"}, {"type": "BB", "reward": "2.3%"}]},
+            {"name": "Electrolux", "category": "Casa e Decoração", "subcategory": "Eletrodomésticos", "offers": [{"type": "Livelo", "reward": "1 pts por R$1"}, {"type": "Inter Cashback", "reward": "7% de cashback"}, {"type": "Inter Site", "reward": "1% de cashback"}, {"type": "Mastercard", "reward": "5%"}, {"type": "BB", "reward": "0.5%"}]},
+            {"name": "Eudora", "category": "Beleza e Saúde", "subcategory": "Cosméticos e Perfumes", "offers": [{"type": "Livelo", "reward": "6 pts por R$1"}, {"type": "Inter Site", "reward": "10% de cashback"}, {"type": "Inter Giftcard", "reward": "6% de cashback no giftcard"}, {"type": "Alelo", "reward": "15%"}, {"type": "Mastercard", "reward": "Brinde"}, {"type": "BB", "reward": "7.5%"}]},
+            {"name": "Fast Shop", "category": "Tecnologia e Eletrônicos", "subcategory": "Informática e Celulares", "offers": [{"type": "Inter Cashback", "reward": "6% de cashback"}, {"type": "Inter Site", "reward": "10% de cashback"}, {"type": "BB", "reward": "1.7%"}]},
+            {"name": "Fila", "category": "Moda e Acessórios", "subcategory": "Esportes", "offers": [{"type": "Livelo", "reward": "2 pts por R$1"}, {"type": "Inter Site", "reward": "5.5% de cashback"}, {"type": "Alelo", "reward": "10%"}, {"type": "Mastercard", "reward": "25%"}, {"type": "BB", "reward": "4.2%"}]},
+            {"name": "Google Play", "category": "Games e Geek", "subcategory": "Consoles e Assinaturas", "offers": [{"type": "Inter Giftcard", "reward": "4% de cashback no giftcard"}]},
+            {"name": "Granado", "category": "Beleza e Saúde", "subcategory": "Cosméticos e Perfumes", "offers": [{"type": "Livelo", "reward": "1 pts por R$1"}, {"type": "Inter Site", "reward": "5% de cashback"}, {"type": "Inter Giftcard", "reward": "3% de cashback no giftcard"}, {"type": "BB", "reward": "3%"}]},
+            {"name": "Havaianas", "category": "Moda e Acessórios", "subcategory": "Calçados", "offers": [{"type": "Livelo", "reward": "2 pts por R$1"}, {"type": "Inter Site", "reward": "5% de cashback"}, {"type": "Inter Giftcard", "reward": "2% de cashback no giftcard"}, {"type": "Mastercard", "reward": "Pague 1 Leve 2"}, {"type": "BB", "reward": "4%"}]},
+            {"name": "Hering", "category": "Moda e Acessórios", "subcategory": "Vestuário", "offers": [{"type": "Livelo", "reward": "3 pts por R$1"}, {"type": "Inter Site", "reward": "2% de cashback"}, {"type": "Alelo", "reward": "25%"}, {"type": "Mastercard", "reward": "10%"}]},
+            {"name": "Iplace", "category": "Tecnologia e Eletrônicos", "subcategory": "Informática e Celulares", "offers": [{"type": "Inter Cashback", "reward": "4% de cashback"}, {"type": "Inter Site", "reward": "1% de cashback"}, {"type": "Mastercard", "reward": "R$30 OFF"}, {"type": "BB", "reward": "1%"}]},
+            {"name": "JBL", "category": "Tecnologia e Eletrônicos", "subcategory": "Áudio, Foto e Acessórios", "offers": [{"type": "Inter Cashback", "reward": "10% de cashback"}, {"type": "Inter Site", "reward": "8% de cashback"}, {"type": "BB", "reward": "2.6%"}]},
+            {"name": "KaBuM!", "category": "Tecnologia e Eletrônicos", "subcategory": "Informática e Celulares", "offers": [{"type": "Inter Cashback", "reward": "5% de cashback"}, {"type": "Inter Site", "reward": "1.61% de cashback"}, {"type": "Inter Giftcard", "reward": "7% de cashback no giftcard"}, {"type": "Alelo", "reward": "20%"}, {"type": "BB", "reward": "1%"}]},
+            {"name": "Kinoplex / UCI", "category": "Viagem e Lazer", "subcategory": "Entretenimento", "offers": [{"type": "Inter Giftcard", "reward": "3% de cashback no giftcard"}]},
+            {"name": "Kopenhagen", "category": "Alimentação e Bebidas", "subcategory": "Cafés e Chocolates", "offers": [{"type": "Inter Giftcard", "reward": "10% de cashback no giftcard"}]},
+            {"name": "LG", "category": "Tecnologia e Eletrônicos", "subcategory": "Eletrodomésticos", "offers": [{"type": "Inter Cashback", "reward": "2% de cashback"}, {"type": "Inter Site", "reward": "12% de cashback"}, {"type": "Alelo", "reward": "50%"}, {"type": "BB", "reward": "1%"}]}, "Localiza", "category": "Viagem e Lazer", "subcategory": "Aluguel de Carros", "offers": [{"type": "Inter Site", "reward": "8% de cashback"}, {"type": "BB", "reward": "3%"}]},
+            {"name": "MadeiraMadeira", "category": "Casa e Decoração", "subcategory": "Móveis e Decoração", "offers": [{"type": "Inter Cashback", "reward": "6% de cashback"}, {"type": "Inter Site", "reward": "7% de cashback"}, {"type": "BB", "reward": "0.6%"}]},
+            {"name": "Magalu", "category": "Supermercados e Variedades", "subcategory": "Grandes Lojas e E-Commerce", "offers": [{"type": "Livelo", "reward": "2 pts por R$1"}, {"type": "Inter Cashback", "reward": "7% de cashback"}, {"type": "Inter Site", "reward": "2% de cashback"}, {"type": "Alelo", "reward": "80%"}, {"type": "Mastercard", "reward": "R$ 30 OFF"}]},
+            {"name": "McDonald's", "category": "Alimentação e Bebidas", "subcategory": "Restaurantes e Fast-Food", "offers": [{"type": "Inter Giftcard", "reward": "2% de cashback no giftcard"}]},
+            {"name": "Mercado Livre", "category": "Supermercados e Variedades", "subcategory": "Grandes Lojas e E-Commerce", "offers": [{"type": "Livelo", "reward": "2 pts por R$1"}]},
+            {"name": "Natura", "category": "Beleza e Saúde", "subcategory": "Cosméticos e Perfumes", "offers": [{"type": "Livelo", "reward": "4 pts por R$1"}, {"type": "Inter Cashback", "reward": "7% de cashback"}, {"type": "Inter Site", "reward": "12% de cashback"}, {"type": "Alelo", "reward": "20%"}, {"type": "Mastercard", "reward": "60%"}, {"type": "BB", "reward": "8%"}]},
+            {"name": "Netshoes", "category": "Moda e Acessórios", "subcategory": "Esportes", "offers": [{"type": "Livelo", "reward": "2 pts por R$1"}, {"type": "Inter Cashback", "reward": "8% de cashback"}, {"type": "Inter Site", "reward": "10% de cashback"}, {"type": "Inter Giftcard", "reward": "4% de cashback no giftcard"}, {"type": "Mastercard", "reward": "18%"}, {"type": "BB", "reward": "4%"}]},
+            {"name": "Nike", "category": "Moda e Acessórios", "subcategory": "Esportes", "offers": [{"type": "Livelo", "reward": "2 pts por R$1"}, {"type": "Inter Site", "reward": "2% de cashback"}, {"type": "Inter Giftcard", "reward": "2% de cashback no giftcard"}, {"type": "Alelo", "reward": "5%"}, {"type": "Mastercard", "reward": "10%"}, {"type": "BB", "reward": "2%"}]},
+            {"name": "Nintendo eShop", "category": "Games e Geek", "subcategory": "Consoles e Assinaturas", "offers": [{"type": "Inter Giftcard", "reward": "4% de cashback no giftcard"}]},
+            {"name": "O Boticário", "category": "Beleza e Saúde", "subcategory": "Cosméticos e Perfumes", "offers": [{"type": "Livelo", "reward": "3 pts por R$1"}, {"type": "Inter Site", "reward": "4.2% de cashback"}, {"type": "Inter Giftcard", "reward": "10% de cashback no giftcard"}, {"type": "Alelo", "reward": "15%"}, {"type": "BB", "reward": "4.2%"}]},
+            {"name": "Outback Steakhouse", "category": "Alimentação e Bebidas", "subcategory": "Restaurantes e Fast-Food", "offers": [{"type": "Livelo", "reward": "1 pts por R$1"}, {"type": "Inter Giftcard", "reward": "15% de cashback no giftcard"}, {"type": "Mastercard", "reward": "Brinde"}]},
+            {"name": "Petz", "category": "Supermercados e Variedades", "subcategory": "Pet Shop", "offers": [{"type": "Livelo", "reward": "2 pts por R$1"}, {"type": "Inter Site", "reward": "2% de cashback"}, {"type": "Inter Giftcard", "reward": "3% de cashback no giftcard"}, {"type": "Alelo", "reward": "10%"}, {"type": "Mastercard", "reward": "10%"}, {"type": "BB", "reward": "2.5%"}]},
+            {"name": "Playstation", "category": "Games e Geek", "subcategory": "Consoles e Assinaturas", "offers": [{"type": "Livelo", "reward": "1 pts por R$1"}, {"type": "Inter Giftcard", "reward": "3% de cashback no giftcard"}]},
+            {"name": "Renner", "category": "Moda e Acessórios", "subcategory": "Vestuário", "offers": [{"type": "Livelo", "reward": "2 pts por R$1"}, {"type": "Inter Site", "reward": "7% de cashback"}, {"type": "Inter Giftcard", "reward": "6% de cashback no giftcard"}, {"type": "Alelo", "reward": "15%"}, {"type": "BB", "reward": "5%"}]},
+            {"name": "Riachuelo", "category": "Moda e Acessórios", "subcategory": "Vestuário", "offers": [{"type": "Livelo", "reward": "5 pts por R$1"}, {"type": "Inter Site", "reward": "4% de cashback"}, {"type": "Inter Giftcard", "reward": "15% de cashback no giftcard"}, {"type": "Alelo", "reward": "12%"}, {"type": "Mastercard", "reward": "12%"}, {"type": "BB", "reward": "3%"}]},
+            {"name": "Samsung", "category": "Tecnologia e Eletrônicos", "subcategory": "Informática e Celulares", "offers": [{"type": "Inter Cashback", "reward": "5% de cashback"}, {"type": "Inter Site", "reward": "1% de cashback"}, {"type": "Alelo", "reward": "10%"}, {"type": "BB", "reward": "1.5%"}]},
+            {"name": "Sephora", "category": "Beleza e Saúde", "subcategory": "Cosméticos e Perfumes", "offers": [{"type": "Livelo", "reward": "1 pts por R$1"}, {"type": "Inter Site", "reward": "3.5% de cashback"}, {"type": "Alelo", "reward": "10%"}, {"type": "Mastercard", "reward": "10%"}, {"type": "BB", "reward": "2.5%"}]},
+            {"name": "Shell", "category": "Viagem e Lazer", "subcategory": "Entretenimento", "offers": [{"type": "Alelo", "reward": "Desconto por litro"}]},
+            {"name": "Shopee", "category": "Supermercados e Variedades", "subcategory": "Grandes Lojas e E-Commerce", "offers": [{"type": "Livelo", "reward": "2 pts por R$1"}, {"type": "Inter Site", "reward": "7% de cashback"}, {"type": "Inter Giftcard", "reward": "9% de cashback no giftcard"}, {"type": "Mastercard", "reward": "R$20 OFF"}, {"type": "BB", "reward": "2%"}]},
+            {"name": "Steam", "category": "Games e Geek", "subcategory": "Jogos Digitais", "offers": [{"type": "Inter Giftcard", "reward": "2% de cashback no giftcard"}]},
+            {"name": "Uber", "category": "Viagem e Lazer", "subcategory": "Entretenimento", "offers": [{"type": "Inter Giftcard", "reward": "3% de cashback no giftcard"}]},
+            {"name": "Vivara", "category": "Moda e Acessórios", "subcategory": "Joias e Relógios", "offers": [{"type": "Livelo", "reward": "1 pts por R$1"}, {"type": "Inter Site", "reward": "10% de cashback"}, {"type": "Inter Giftcard", "reward": "2% de cashback no giftcard"}, {"type": "BB", "reward": "2%"}]},
+            {"name": "Xbox", "category": "Games e Geek", "subcategory": "Consoles e Assinaturas", "offers": [{"type": "Inter Giftcard", "reward": "5% de cashback no giftcard"}]},
+            {"name": "Zé Delivery", "category": "Alimentação e Bebidas", "subcategory": "Delivery e Outros", "offers": [{"type": "Inter Giftcard", "reward": "3% de cashback no giftcard"}]}
+        ];
 
-        storesData.forEach(item => {
-            if (item.categoria) categories.add(item.categoria);
-            if (item.subcategoria) subcategories.add(item.subcategoria);
-            if (item.beneficios) {
-                item.beneficios.forEach(b => {
-                    if (b.programa) programs.add(b.programa);
-                });
-            }
-        });
-
-        populateSelect('categorySelect', Array.from(categories).sort(), 'Todas as Categorias');
-        populateSelect('subcategorySelect', Array.from(subcategories).sort(), 'Todas as Subcategorias');
-        populateSelect('programSelect', Array.from(programs).sort(), 'Todos os Programas');
-
-        filterStores();
-    }
-
-    function populateSelect(id, items, defaultText) {
-        const select = document.getElementById(id);
-        select.innerHTML = `<option value="">${defaultText}</option>`;
-        items.forEach(item => {
-            const opt = document.createElement('option');
-            opt.value = item;
-            opt.textContent = item;
-            select.appendChild(opt);
-        });
-    }
-
-    function filterStores() {
-        const search = document.getElementById('searchInput').value.toLowerCase().trim();
-        const cat = document.getElementById('categorySelect').value;
-        const sub = document.getElementById('subcategorySelect').value;
-        const prog = document.getElementById('programSelect').value;
-        const order = document.getElementById('orderSelect').value;
-
-        let filtered = storesData.filter(item => {
-            const matchesSearch = item.loja.toLowerCase().includes(search);
-            const matchesCat = !cat || item.categoria === cat;
-            const matchesSub = !sub || item.subcategoria === sub;
-            const matchesProg = !prog || item.beneficios.some(b => b.programa === prog);
-
-            return matchesSearch && matchesCat && matchesSub && matchesProg;
-        });
-
-        filtered.sort((a, b) => {
-            return order === 'AZ' 
-                ? a.loja.localeCompare(b.loja, 'pt-BR', { sensitivity: 'base' })
-                : b.loja.localeCompare(a.loja, 'pt-BR', { sensitivity: 'base' });
-        });
-
-        renderCards(filtered);
-    }
-
-    function renderCards(list) {
-        const container = document.getElementById('cardsContainer');
+        const searchInput = document.getElementById('searchInput');
+        const categorySelect = document.getElementById('categorySelect');
+        const subcategorySelect = document.getElementById('subcategorySelect');
+        const programSelect = document.getElementById('programSelect');
+        const sortSelect = document.getElementById('sortSelect');
+        const storeList = document.getElementById('storeList');
         const counter = document.getElementById('counter');
 
-        counter.textContent = `Mostrando ${list.length} de ${storesData.length} lojas`;
-        container.innerHTML = '';
+        programs.forEach(program => {
+            const option = document.createElement('option');
+            option.value = program;
+            option.textContent = program;
+            programSelect.appendChild(option);
+        });
 
-        if (list.length === 0) {
-            container.innerHTML = '<div class="empty-message">Nenhuma loja encontrada com esses filtros.</div>';
-            return;
+        function updateSubcategories() {
+            const cat = categorySelect.value;
+            subcategorySelect.innerHTML = '<option value="all">Todas as Subcategorias</option>';
+            if (cat !== 'all' && subcategoryMap[cat]) {
+                subcategoryMap[cat].forEach(sub => {
+                    const opt = document.createElement('option');
+                    opt.value = sub;
+                    opt.textContent = sub;
+                    subcategorySelect.appendChild(opt);
+                });
+            }
         }
 
-        list.forEach(item => {
-            const card = document.createElement('div');
-            card.className = 'card';
+        function render() {
+            const searchVal = searchInput.value.toLowerCase().trim();
+            const catVal = categorySelect.value;
+            const subCatVal = subcategorySelect.value;
+            const progVal = programSelect.value;
+            const sortVal = sortSelect.value;
 
-            let badgesHtml = '';
-            if (item.categoria) badgesHtml += `<span class="badge">${item.categoria}</span>`;
-            if (item.subcategoria) badgesHtml += `<span class="badge sub">${item.subcategoria}</span>`;
+            let filtered = stores.filter(store => {
+                const matchesSearch = store.name.toLowerCase().includes(searchVal);
+                const matchesCat = catVal === 'all' || store.category === catVal;
+                const matchesSubCat = subCatVal === 'all' || store.subcategory === subCatVal;
+                const matchesProg = progVal === 'all' || store.offers.some(o => o.type === progVal);
+                const hasOffers = store.offers.length > 0;
 
-            let benefitsHtml = '';
-            if (item.beneficios && item.beneficios.length > 0) {
-                benefitsHtml = item.beneficios.map(b => `
-                    <div class="benefit-item">
-                        <span class="program-name">${b.programa}</span>
-                        <span class="benefit-value">${b.valor}</span>
+                return matchesSearch && matchesCat && matchesSubCat && matchesProg && hasOffers;
+            });
+
+            filtered.sort((a, b) => {
+                if (sortVal === 'az') return a.name.localeCompare(b.name, 'pt-BR');
+                if (sortVal === 'za') return b.name.localeCompare(a.name, 'pt-BR');
+                return 0;
+            });
+
+            counter.innerText = `Mostrando ${filtered.length} de ${stores.filter(s => s.offers.length > 0).length} lojas`;
+
+            if (filtered.length === 0) {
+                storeList.innerHTML = `<div class="empty-state">Nenhuma loja encontrada com esses filtros.</div>`;
+            } else {
+                storeList.innerHTML = filtered.map(store => `
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">${store.name}</div>
+                            <span class="category-badge">${store.category}</span>
+                        </div>
+                        <div class="card-divider"></div>
+                        <div class="offer-group">
+                            ${store.offers
+                                .filter(o => progVal === 'all' || o.type === progVal)
+                                .map(o => `
+                                    <div class="offer">
+                                        <span class="offer-type">${o.type}</span>
+                                        <span class="offer-reward">${o.reward}</span>
+                                    </div>
+                                `).join('')}
+                        </div>
                     </div>
                 `).join('');
             }
+        }
 
-            card.innerHTML = `
-                <div class="card-header">
-                    <div class="store-name">${item.loja}</div>
-                    ${badgesHtml ? `<div class="badge-group">${badgesHtml}</div>` : ''}
-                </div>
-                <div class="benefits-list">
-                    ${benefitsHtml}
-                </div>
-            `;
-
-            container.appendChild(card);
+        categorySelect.addEventListener('change', () => {
+            updateSubcategories();
+            render();
         });
-    }
+        subcategorySelect.addEventListener('change', render);
+        programSelect.addEventListener('change', render);
+        sortSelect.addEventListener('change', render);
+        searchInput.addEventListener('input', render);
 
-    document.addEventListener('DOMContentLoaded', initFilters);
-</script>
+        render();
+    </script>
 </body>
 </html>
