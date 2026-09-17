@@ -3,264 +3,344 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Buscador de Descontos e Benefícios</title>
+  <title>Consultor de Benefícios e Descontos</title>
+  <!-- Biblioteca para ler arquivos Excel (.xlsx) -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg-primary: #fff0f3;
+      --bg-card: #ffffff;
+      --pink-accent: #ffb3c6;
+      --pink-dark: #c9184a;
+      --pink-soft: #ffccd5;
+      --text-color: #590d22;
+      --border-radius: 12px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background-color: #fff0f5;
-      color: #333333;
-      padding: 16px;
+      background-color: var(--bg-primary);
+      color: var(--text-color);
+      padding: 15px;
       max-width: 800px;
       margin: 0 auto;
     }
-    header { text-align: center; padding: 12px 0 20px 0; }
-    h1 { color: #d81b60; font-size: 24px; margin-bottom: 6px; }
-    .subtitle { color: #888888; font-size: 14px; }
-    .controls {
-      background-color: #ffffff;
-      padding: 16px;
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(216, 27, 96, 0.08);
-      border: 1px solid #fce4ec;
+
+    header {
+      text-align: center;
+      margin-bottom: 20px;
+      padding: 10px 0;
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      color: var(--pink-dark);
+      margin-bottom: 5px;
+    }
+
+    .file-input-container {
+      background-color: var(--bg-card);
+      border: 2px dashed var(--pink-accent);
+      padding: 15px;
+      border-radius: var(--border-radius);
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .file-input-container input {
+      display: none;
+    }
+
+    .btn-upload {
+      background-color: var(--pink-dark);
+      color: white;
+      padding: 10px 20px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: bold;
+      display: inline-block;
+      transition: background 0.2s;
+    }
+
+    .controls-panel {
+      background: var(--bg-card);
+      padding: 15px;
+      border-radius: var(--border-radius);
+      box-shadow: 0 4px 12px rgba(201, 24, 74, 0.08);
       margin-bottom: 20px;
       display: flex;
       flex-direction: column;
       gap: 12px;
     }
-    .search-input {
+
+    .search-box input {
       width: 100%;
       padding: 12px;
-      border: 1px solid #f48fb1;
+      border: 1px solid var(--pink-accent);
       border-radius: 8px;
-      font-size: 15px;
       outline: none;
+      font-size: 1rem;
+      background-color: #fffafb;
     }
-    .filter-group {
+
+    .search-box input:focus {
+      border-color: var(--pink-dark);
+    }
+
+    .filters-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
       gap: 10px;
     }
-    @media (max-width: 500px) { .filter-group { grid-template-columns: 1fr; } }
+
     select {
       width: 100%;
       padding: 10px;
-      border: 1px solid #f48fb1;
+      border: 1px solid var(--pink-accent);
       border-radius: 8px;
-      font-size: 14px;
-      background-color: #ffffff;
+      background-color: #fffafb;
+      color: var(--text-color);
+      outline: none;
+      font-size: 0.9rem;
     }
-    .counter { font-size: 13px; color: #888888; text-align: right; }
-    .cards-grid { display: flex; flex-direction: column; gap: 12px; }
+
+    .cards-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
     .card {
-      background-color: #ffffff;
-      border-radius: 12px;
-      padding: 16px;
-      border: 1px solid #f8bbd0;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+      background: var(--bg-card);
+      border-left: 5px solid var(--pink-dark);
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
     }
+
     .card-header {
       display: flex;
       justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 12px;
+      align-items: center;
+      margin-bottom: 8px;
     }
-    .card-title { font-size: 18px; font-weight: 700; color: #d81b60; }
-    .tags { display: flex; gap: 6px; flex-wrap: wrap; }
-    .tag {
-      font-size: 11px;
-      font-weight: 600;
+
+    .store-name {
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: var(--pink-dark);
+    }
+
+    .badges {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+
+    .badge {
+      font-size: 0.75rem;
       padding: 4px 8px;
       border-radius: 12px;
-      text-transform: uppercase;
+      font-weight: 600;
     }
-    .tag-cat { background-color: #fce4ec; color: #c2185b; }
-    .tag-subcat { background-color: #f3e5f5; color: #7b1fa2; }
-    .benefit-item {
-      display: flex;
-      justify-content: space-between;
-      background-color: #fff8fa;
-      padding: 8px 12px;
-      border-radius: 6px;
-      font-size: 13px;
-      margin-bottom: 6px;
-      border-left: 3px solid #f48fb1;
+
+    .badge-category {
+      background-color: var(--pink-soft);
+      color: var(--pink-dark);
     }
-    .benefit-program { font-weight: 600; color: #444444; }
-    .benefit-value { color: #d81b60; font-weight: 700; }
+
+    .badge-program {
+      background-color: #800020;
+      color: white;
+    }
+
+    .card-body {
+      font-size: 0.95rem;
+      color: #333;
+      line-height: 1.4;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 30px;
+      color: #a3485e;
+    }
   </style>
 </head>
 <body>
 
   <header>
-    <h1>Buscador de Descontos</h1>
-    <p class="subtitle">Encontre recompensas, cashback e benefícios por loja</p>
+    <h1>Meus Descontos & Benefícios</h1>
+    <p style="font-size: 0.85rem; color: #a3485e;">Consulte rapidamente onde comprar com vantagem</p>
   </header>
 
-  <div class="controls">
-    <input type="text" id="searchInput" class="search-input" placeholder="Pesquisar loja ou benefício...">
-    
-    <div class="filter-group">
-      <select id="catSelect">
+  <section class="file-input-container">
+    <label for="excelFile" class="btn-upload">Carregar Planilha (.xlsx)</label>
+    <input type="file" id="excelFile" accept=".xlsx, .xls, .csv">
+    <p id="fileName" style="margin-top: 8px; font-size: 0.8rem; color: #666;">Nenhum arquivo carregado</p>
+  </section>
+
+  <section class="controls-panel">
+    <div class="search-box">
+      <input type="text" id="searchInput" placeholder="Buscar por loja, benefício ou palavra-chave...">
+    </div>
+
+    <div class="filters-grid">
+      <select id="sortSelect">
+        <option value="AZ">Ordem: A - Z</option>
+        <option value="ZA">Ordem: Z - A</option>
+      </select>
+
+      <select id="storeFilter">
+        <option value="">Todas as Lojas</option>
+      </select>
+
+      <select id="categoryFilter">
         <option value="">Todas as Categorias</option>
       </select>
 
-      <select id="subcatSelect">
+      <select id="subcategoryFilter">
         <option value="">Todas as Subcategorias</option>
       </select>
     </div>
+  </section>
 
-    <div class="filter-group">
-      <select id="sortSelect">
-        <option value="az">Ordem A-Z</option>
-        <option value="za">Ordem Z-A</option>
-      </select>
-      <div class="counter" id="storeCounter">Carregando...</div>
-    </div>
-  </div>
-
-  <div id="cardsContainer" class="cards-grid"></div>
+  <main class="cards-container" id="cardsContainer">
+    <div class="empty-state">Carregue sua planilha para visualizar os benefícios.</div>
+  </main>
 
   <script>
-    // Substitua este array pelo JSON gerado a partir da sua planilha
-    const storesData = [/* DADOS_JSON_DA_PLANILHA */];
+    let rawData = [];
 
-    const searchInput = document.getElementById('searchInput');
-    const catSelect = document.getElementById('catSelect');
-    const subcatSelect = document.getElementById('subcatSelect');
-    const sortSelect = document.getElementById('sortSelect');
-    const cardsContainer = document.getElementById('cardsContainer');
-    const storeCounter = document.getElementById('storeCounter');
+    document.getElementById('excelFile').addEventListener('change', handleFile);
+    document.getElementById('searchInput').addEventListener('input', renderData);
+    document.getElementById('sortSelect').addEventListener('change', renderData);
+    document.getElementById('storeFilter').addEventListener('change', renderData);
+    document.getElementById('categoryFilter').addEventListener('change', renderData);
+    document.getElementById('subcategoryFilter').addEventListener('change', renderData);
 
-    function initCategories() {
-      const categories = [...new Set(storesData.map(item => item.cat).filter(Boolean))].sort();
-      categories.forEach(cat => {
-        const opt = document.createElement('option');
-        opt.value = cat;
-        opt.textContent = cat;
-        catSelect.appendChild(opt);
-      });
-      updateSubcategoryOptions();
+    function handleFile(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      document.getElementById('fileName').textContent = file.name;
+
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        const data = new Uint8Array(evt.target.result);
+        const workbook = XLSX.read(data, { type: 'array' });
+        const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+        const jsonData = XLSX.utils.sheet_to_json(firstSheet, { defval: "" });
+
+        rawData = normalizeKeys(jsonData);
+        populateDropdowns();
+        renderData();
+      };
+      reader.readAsArrayBuffer(file);
     }
 
-    function updateSubcategoryOptions() {
-      const selectedCat = catSelect.value;
-      const currentSubcat = subcatSelect.value;
-
-      let relevantStores = storesData;
-      if (selectedCat) {
-        relevantStores = storesData.filter(s => s.cat === selectedCat);
-      }
-
-      const subcategories = [...new Set(relevantStores.map(item => item.subcat).filter(Boolean))].sort();
-
-      subcatSelect.innerHTML = '<option value="">Todas as Subcategorias</option>';
-
-      if (subcategories.length > 0) {
-        subcatSelect.disabled = false;
-        subcategories.forEach(subcat => {
-          const opt = document.createElement('option');
-          opt.value = subcat;
-          opt.textContent = subcat;
-          subcatSelect.appendChild(opt);
+    // Normaliza os nomes das colunas da planilha para busca universal
+    function normalizeKeys(data) {
+      return data.map(item => {
+        const normalized = {};
+        Object.keys(item).forEach(key => {
+          const k = key.trim().toLowerCase();
+          if (k.includes('loja')) normalized.loja = item[key];
+          else if (k.includes('subcat') || k.includes('sub-cat')) normalized.subcategoria = item[key];
+          else if (k.includes('cat')) normalized.categoria = item[key];
+          else if (k.includes('prog') || k.includes('beneficio') || k.includes('cartao')) normalized.programa = item[key];
+          else normalized[key] = item[key];
         });
-
-        const hasEmptySubcat = relevantStores.some(s => !s.subcat);
-        if (hasEmptySubcat && selectedCat) {
-          const optNone = document.createElement('option');
-          optNone.value = "__NONE__";
-          optNone.textContent = "(Sem Subcategoria)";
-          subcatSelect.appendChild(optNone);
-        }
-
-        if (subcategories.includes(currentSubcat) || currentSubcat === "__NONE__") {
-          subcatSelect.value = currentSubcat;
-        } else {
-          subcatSelect.value = "";
-        }
-      } else {
-        subcatSelect.disabled = true;
-        subcatSelect.value = "";
-      }
+        return normalized;
+      });
     }
 
-    function renderCards() {
-      const search = searchInput.value.toLowerCase().trim();
-      const selectedCat = catSelect.value;
-      const selectedSubcat = subcatSelect.value;
-      const sortOrder = sortSelect.value;
+    function populateDropdowns() {
+      const stores = [...new Set(rawData.map(d => d.loja).filter(Boolean))].sort();
+      const categories = [...new Set(rawData.map(d => d.categoria).filter(Boolean))].sort();
+      const subcategories = [...new Set(rawData.map(d => d.subcategoria).filter(Boolean))].sort();
 
-      let filtered = storesData.filter(item => {
-        if (selectedCat && item.cat !== selectedCat) return false;
+      fillSelect('storeFilter', stores, 'Todas as Lojas');
+      fillSelect('categoryFilter', categories, 'Todas as Categorias');
+      fillSelect('subcategoryFilter', subcategories, 'Todas as Subcategorias');
+    }
 
-        if (selectedSubcat === "__NONE__") {
-          if (item.subcat !== "") return false;
-        } else if (selectedSubcat && item.subcat !== selectedSubcat) {
-          return false;
-        }
+    function fillSelect(elementId, items, defaultText) {
+      const select = document.getElementById(elementId);
+      select.innerHTML = `<option value="">${defaultText}</option>`;
+      items.forEach(item => {
+        const opt = document.createElement('option');
+        opt.value = item;
+        opt.textContent = item;
+        select.appendChild(opt);
+      });
+    }
 
-        if (search) {
-          const inName = item.nome.toLowerCase().includes(search);
-          const inCat = item.cat.toLowerCase().includes(search);
-          const inSubcat = item.subcat.toLowerCase().includes(search);
-          const inBenefits = Object.entries(item.beneficios).some(
-            ([prog, val]) => prog.toLowerCase().includes(search) || val.toLowerCase().includes(search)
-          );
-          return inName || inCat || inSubcat || inBenefits;
-        }
+    function renderData() {
+      const search = document.getElementById('searchInput').value.toLowerCase();
+      const sort = document.getElementById('sortSelect').value;
+      const selectedStore = document.getElementById('storeFilter').value;
+      const selectedCat = document.getElementById('categoryFilter').value;
+      const selectedSubCat = document.getElementById('subcategoryFilter').value;
 
-        return true;
+      let filtered = rawData.filter(item => {
+        const matchesSearch = Object.values(item).some(val => 
+          String(val).toLowerCase().includes(search)
+        );
+        const matchesStore = !selectedStore || item.loja === selectedStore;
+        const matchesCat = !selectedCat || item.categoria === selectedCat;
+        const matchesSubCat = !selectedSubCat || item.subcategoria === selectedSubCat;
+
+        return matchesSearch && matchesStore && matchesCat && matchesSubCat;
       });
 
       filtered.sort((a, b) => {
-        if (sortOrder === 'az') return a.nome.localeCompare(b.nome, 'pt-BR');
-        if (sortOrder === 'za') return b.nome.localeCompare(a.nome, 'pt-BR');
-        return 0;
+        const nameA = String(a.loja || '').toLowerCase();
+        const nameB = String(b.loja || '').toLowerCase();
+        return sort === 'AZ' ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA);
       });
 
-      storeCounter.textContent = `Exibindo ${filtered.length} de ${storesData.length} lojas`;
+      const container = document.getElementById('cardsContainer');
+      container.innerHTML = '';
 
       if (filtered.length === 0) {
-        cardsContainer.innerHTML = `<div class="card" style="text-align:center; padding: 24px; color: #888;">Nenhuma loja encontrada.</div>`;
+        container.innerHTML = `<div class="empty-state">Nenhum benefício encontrado com os filtros selecionados.</div>`;
         return;
       }
 
-      cardsContainer.innerHTML = filtered.map(item => {
-        const benefitsEntries = Object.entries(item.beneficios);
-        const benefitsHtml = benefitsEntries.length > 0 
-          ? benefitsEntries.map(([prog, val]) => `
-              <div class="benefit-item">
-                <span class="benefit-program">${prog}</span>
-                <span class="benefit-value">${val}</span>
-              </div>
-            `).join('')
-          : `<div style="font-size: 13px; color: #999; font-style: italic;">Nenhum benefício cadastrado</div>`;
+      filtered.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'card';
 
-        return `
-          <div class="card">
-            <div class="card-header">
-              <div class="card-title">${item.nome}</div>
-              <div class="tags">
-                <span class="tag tag-cat">${item.cat}</span>
-                ${item.subcat ? `<span class="tag tag-subcat">${item.subcat}</span>` : ''}
-              </div>
-            </div>
-            <div>${benefitsHtml}</div>
+        // Capturar propriedades restantes para o corpo do card
+        const extraDetails = Object.keys(item)
+          .filter(k => !['loja', 'categoria', 'subcategoria', 'programa'].includes(k))
+          .map(k => `<strong>${k}:</strong> ${item[k]}`)
+          .join('<br>');
+
+        card.innerHTML = `
+          <div class="card-header">
+            <span class="store-name">${item.loja || 'Loja sem nome'}</span>
+          </div>
+          <div class="badges">
+            ${item.programa ? `<span class="badge badge-program">${item.programa}</span>` : ''}
+            ${item.categoria ? `<span class="badge badge-category">${item.categoria}</span>` : ''}
+            ${item.subcategoria ? `<span class="badge badge-category" style="opacity:0.8">${item.subcategoria}</span>` : ''}
+          </div>
+          <div class="card-body">
+            ${extraDetails}
           </div>
         `;
-      }).join('');
+        container.appendChild(card);
+      });
     }
-
-    searchInput.addEventListener('input', renderCards);
-    catSelect.addEventListener('change', () => {
-      updateSubcategoryOptions();
-      renderCards();
-    });
-    subcatSelect.addEventListener('change', renderCards);
-    sortSelect.addEventListener('change', renderCards);
-
-    initCategories();
-    renderCards();
   </script>
 </body>
 </html>
